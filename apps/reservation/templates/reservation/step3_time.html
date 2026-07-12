@@ -1,17 +1,4 @@
 {% extends "reservation/_base.html" %}
-{% block header_title %}시간 선택{% endblock %}
 {% block content %}
-  <h2>{{ draft.date|default:"선택한 날짜" }} 시간을 선택해주세요</h2>
-  <form method="post" action="{% url 'reservation:time' %}">
-    {% csrf_token %}
-    <div class="time-list">
-      {% for slot in slots %}
-        <label class="time-slot">
-          <input type="radio" name="time" value="{{ slot }}" {% if forloop.first %}checked{% endif %}>
-          {{ slot }}
-        </label>
-      {% endfor %}
-    </div>
-    <button type="submit" class="btn-primary">다음</button>
-  </form>
+  <!-- TODO(담당자 1): 시간 선택 화면. 폼 제출은 POST reservation:time -->
 {% endblock %}

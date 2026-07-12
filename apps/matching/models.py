@@ -1,15 +1,15 @@
 """
-3. 매칭 로직 + 실시간 통신 담당 모델.
+공통 계약: HelpRequest 모델.
+
+이 필드들은 4명이 전부 공유하는 데이터 구조라서 이름/타입을 바꾸지 않는 게
+좋습니다 (바꾸면 다른 사람 코드가 깨짐). 그 외 실제 동작(동시 수락 처리,
+완료/취소 처리 등)은 담당자 3이 이 모델에 메서드를 추가하며 직접 구현하세요.
 
 HelpRequest 하나가 "이용자가 SOS 버튼을 눌러서 도우미가 매칭되고
-완료(또는 종료)될 때까지"의 세션 전체를 나타낸다.
-
-동시 수락 문제(여러 도우미가 동시에 수락 버튼을 누르는 경우)는
-try_accept() 안에서 select_for_update() + 조건부 update 로 원자적으로 처리한다.
+완료(또는 종료)될 때까지"의 세션 전체를 나타냅니다.
 """
 from django.conf import settings
-from django.db import models, transaction
-from django.utils import timezone
+from django.db import models
 
 
 class HelpRequest(models.Model):
@@ -23,13 +23,13 @@ class HelpRequest(models.Model):
     # 이용자는 로그인이 없으므로 Django 세션 키만으로 식별한다.
     user_session_key = models.CharField(max_length=64, db_index=True)
 
-    # 예약 화면의 어느 단계에서 도움을 요청했는지 (reservation 담당자가 채워줌)
+    # 예약 화면의 어느 단계에서 도움을 요청했는지
     reservation_step = models.CharField(max_length=50, blank=True, default="")
 
-    # 이용자 화면 캡처. 실제 구현에서는 이미지 업로드/오브젝트 스토리지로 교체 가능.
+    # 이용자 화면 캡처
     screenshot = models.ImageField(upload_to="screenshots/%Y/%m/%d/", null=True, blank=True)
 
-    # 도우미가 캔버스에 그린 주석 데이터 (JSON 문자열: 화살표/원/텍스트 등의 좌표 목록)
+    # 도우미가 캔버스에 그린 주석 데이터 (JSON 문자열 등, 형식은 담당자 2/3이 정하기)
     canvas_data = models.TextField(blank=True, default="")
 
     helper = models.ForeignKey(
@@ -53,41 +53,12 @@ class HelpRequest(models.Model):
         return f"HelpRequest#{self.id} [{self.status}]"
 
     # ------------------------------------------------------------------
-    # 매칭 핵심 로직
+    # TODO(담당자 3): 아래와 같은 동작들이 필요합니다. 메서드로 추가하든,
+    # consumers.py 쪽에 직접 로직을 두든 원하는 방식으로 구현하세요.
+    #
+    # - 도우미가 "수락"을 눌렀을 때: 이미 WAITING 상태인 요청만 MATCHED로
+    #   바꾸고 helper를 지정. 여러 도우미가 동시에 눌러도 한 명만 성공해야
+    #   함 (select_for_update / 조건부 update 같은 방법으로 원자성 보장 필요)
+    # - 완료 처리: status를 DONE으로, completed_at 기록
+    # - 취소("괜찮아요!") 처리: status를 CANCELLED로, completed_at 기록
     # ------------------------------------------------------------------
-    @transaction.atomic
-    def try_accept(self, helper_user) -> bool:
-        """여러 도우미가 동시에 수락을 눌러도 단 한 명만 배정되도록 원자적으로 처리.
-
-        Returns:
-            True  -> 이 helper_user 가 배정에 성공함
-            False -> 이미 다른 도우미가 먼저 가져감 (호출한 쪽은 '이미 매칭완료' 처리)
-        """
-        updated = (
-            HelpRequest.objects.select_for_update()
-            .filter(pk=self.pk, status=self.Status.WAITING)
-            .update(status=self.Status.MATCHED, helper=helper_user, matched_at=timezone.now())
-        )
-        if updated:
-            self.refresh_from_db()
-            return True
-        return False
-
-    def mark_in_progress(self):
-        self.status = self.Status.IN_PROGRESS
-        self.save(update_fields=["status"])
-
-    def mark_done(self):
-        """예약 완료 또는 '괜찮아요!' 처리 -> 효자뱃지 지급 대상이 됨.
-
-        실제 뱃지 지급은 accounts 앱의 Badge 모델/시그널에서 처리한다.
-        (담당자 4와 연동 지점: apps/accounts/models.py 의 Badge, signals 참고)
-        """
-        self.status = self.Status.DONE
-        self.completed_at = timezone.now()
-        self.save(update_fields=["status", "completed_at"])
-
-    def cancel(self):
-        self.status = self.Status.CANCELLED
-        self.completed_at = timezone.now()
-        self.save(update_fields=["status", "completed_at"])

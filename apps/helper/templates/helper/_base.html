@@ -4,25 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}효도클릭 도우미{% endblock %}</title>
+  <title>{% block title %}효도클릭 - 도우미{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'helper/css/style.css' %}">
 </head>
 <body>
-  <div class="app-frame">
-    {% if user.is_authenticated %}
-      <header class="app-header">
-        <span>효도클릭 · 도우미</span>
-        <nav>
-          <a href="{% url 'helper:waiting' %}">대기</a>
-          <a href="{% url 'helper:mypage' %}">마이페이지</a>
-          <a href="{% url 'helper:logout' %}">로그아웃</a>
-        </nav>
-      </header>
-    {% endif %}
-    <main class="app-body">
-      {% block content %}{% endblock %}
-    </main>
-  </div>
+  {# TODO(담당자 2): 로그인 상태일 때 보여줄 상단 네비게이션 등 공통 레이아웃 구성 #}
+  {% block content %}{% endblock %}
   {% block extra_js %}{% endblock %}
 </body>
 </html>

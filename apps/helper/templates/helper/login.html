@@ -1,13 +1,7 @@
 {% extends "helper/_base.html" %}
 {% load static %}
 {% block content %}
-  <h2>도우미 로그인</h2>
-  <form id="login-form" class="auth-form">
-    <label>아이디 <input type="text" name="username" required></label>
-    <label>비밀번호 <input type="password" name="password" required></label>
-    <button type="submit" class="btn-primary">로그인</button>
-  </form>
-  <p id="login-error" class="error"></p>
-  <p>계정이 없으신가요? <a href="{% url 'helper:signup' %}">회원가입</a></p>
+  <!-- TODO(담당자 2): 로그인 폼. accounts API(POST /api/accounts/login/)를
+       fetch로 호출하도록 static/helper/js/auth.js 에 구현 -->
 {% endblock %}
 {% block extra_js %}<script src="{% static 'helper/js/auth.js' %}"></script>{% endblock %}

@@ -1,18 +1,4 @@
 {% extends "reservation/_base.html" %}
-{% block header_title %}진료 유형 선택{% endblock %}
 {% block content %}
-  <h2>받으실 진료 유형을 선택해주세요</h2>
-  <form method="post" action="{% url 'reservation:care_type' %}">
-    {% csrf_token %}
-    <div class="care-type-list">
-      {% for value, label, desc in care_types %}
-        <label class="care-type-option">
-          <input type="radio" name="care_type" value="{{ value }}" {% if forloop.first %}checked{% endif %}>
-          <span class="title">{{ label }}</span>
-          <span class="desc">{{ desc }}</span>
-        </label>
-      {% endfor %}
-    </div>
-    <button type="submit" class="btn-primary">다음</button>
-  </form>
+  <!-- TODO(담당자 1): 진료 유형 선택 화면. 폼 제출은 POST reservation:care_type -->
 {% endblock %}

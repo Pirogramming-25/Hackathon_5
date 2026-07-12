@@ -1,25 +1,7 @@
 {% extends "helper/_base.html" %}
 {% load static %}
 {% block content %}
-  <div id="session-status" class="session-status">연결 중...</div>
-
-  <div class="canvas-wrap">
-    <canvas id="board"
-            width="380" height="600"
-            data-request-id="{{ request_id }}"
-            data-screenshot-url="{{ screenshot_url }}"></canvas>
-  </div>
-
-  <div class="toolbar">
-    <button data-tool="pen" class="tool active">✏️ 펜</button>
-    <button data-tool="arrow" class="tool">➡️ 화살표</button>
-    <button data-tool="circle" class="tool">⭕ 동그라미</button>
-    <button data-tool="rect" class="tool">▭ 사각형</button>
-    <button data-tool="text" class="tool">📝 메모</button>
-    <button data-tool="eraser" class="tool">🧽 지우개</button>
-    <button id="reset-btn">🔄 초기화</button>
-  </div>
-
-  <button id="complete-btn" class="btn-primary">완료 전송</button>
+  <!-- TODO(담당자 2): request_id={{ request_id }} 세션의 캔버스 화면.
+       그리기 도구(펜/화살표/동그라미/사각형/메모/지우개/초기화) + 완료 전송 버튼 -->
 {% endblock %}
 {% block extra_js %}<script src="{% static 'helper/js/canvas.js' %}"></script>{% endblock %}

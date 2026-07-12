@@ -1,15 +1,4 @@
 {% extends "reservation/_base.html" %}
-{% block header_title %}예약 확인{% endblock %}
 {% block content %}
-  <div class="confirm-check">✔</div>
-  <h2 class="confirm-title">예약이 완료되었습니다</h2>
-
-  <dl class="confirm-list">
-    <dt>날짜</dt><dd>{{ draft.date|default:"-" }}</dd>
-    <dt>시간</dt><dd>{{ draft.time|default:"-" }}</dd>
-    <dt>진료 유형</dt><dd>{{ draft.care_type|default:"-" }}</dd>
-    <dt>예약금</dt><dd>10,000원 결제완료</dd>
-  </dl>
-
-  <a class="btn-secondary" href="{% url 'reservation:start' %}">처음으로</a>
+  <!-- TODO(담당자 1): 예약 확인 화면 -->
 {% endblock %}
