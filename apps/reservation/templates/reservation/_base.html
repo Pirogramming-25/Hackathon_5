@@ -4,24 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}서울튼튼병원 예약{% endblock %}</title>
+  <title>{% block title %}효도클릭 - 이용자{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'reservation/css/style.css' %}">
 </head>
-<body data-step="{{ step }}">
-  <div class="phone-frame">
-    <header class="phone-header">
-      <button class="back" onclick="history.back()">←</button>
-      <span>{% block header_title %}서울튼튼병원{% endblock %}</span>
-    </header>
+<body>
+  {% block content %}{% endblock %}
 
-    <main class="phone-body">
-      {% block content %}{% endblock %}
-    </main>
+  {# TODO(담당자 1): SOS 버튼/패널을 여기에 include 하기 #}
+  {# {% include "reservation/_sos_widget.html" %} #}
 
-    {% include "reservation/_sos_widget.html" %}
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="{% static 'reservation/js/sos.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>

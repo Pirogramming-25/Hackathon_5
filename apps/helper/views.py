@@ -1,52 +1,39 @@
 """
 2. 도우미(Helper) 프론트 담당 뷰.
 
-실제 로그인/회원가입 처리(계정 생성, 인증)는 accounts 앱의 API가 담당하고,
-여기 뷰들은 화면(템플릿) 렌더링과 로그인 여부에 따른 접근 제어만 담당한다.
+urls.py 가 아래 함수 이름들을 이미 라우팅해뒀으니 이름은 유지하고 내용을
+채우면 됩니다. 로그인/회원가입 "실제 처리"는 accounts 앱의 API를 fetch()로
+호출하는 방식(담당자 4와 계약)으로 구현하는 걸 추천합니다.
 """
-from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
-
-from apps.matching.models import HelpRequest
+from django.shortcuts import render
 
 
 def login_view(request):
-    if request.user.is_authenticated:
-        return redirect("helper:waiting")
+    """TODO: 로그인 폼 화면. 로그인된 상태면 waiting으로 리다이렉트"""
     return render(request, "helper/login.html")
 
 
 def signup_view(request):
-    if request.user.is_authenticated:
-        return redirect("helper:waiting")
+    """TODO: 회원가입 폼 화면"""
     return render(request, "helper/signup.html")
 
 
 def logout_view(request):
-    logout(request)
-    return redirect("helper:login")
+    """TODO: 로그아웃 처리 후 login으로 리다이렉트"""
+    pass
 
 
-@login_required
 def waiting_view(request):
-    """대기 상태 화면. 새 요청은 ws/helpers/ 로 실시간으로 받는다 (waiting.js)."""
+    """TODO: 로그인 필요. 대기 화면 (새 요청은 ws/helpers/ 로 실시간 수신)"""
     return render(request, "helper/waiting.html")
 
 
-@login_required
 def canvas_view(request, request_id):
-    """매칭된 세션의 캔버스 화면. 이용자가 보낸 스크린샷 위에 그려서 안내한다."""
-    help_request = HelpRequest.objects.filter(pk=request_id).first()
-    screenshot_url = help_request.screenshot.url if help_request and help_request.screenshot else ""
-    return render(
-        request,
-        "helper/canvas.html",
-        {"request_id": request_id, "screenshot_url": screenshot_url},
-    )
+    """TODO: 로그인 필요. request_id 에 해당하는 HelpRequest의 스크린샷을
+    가져와서 캔버스 화면에 표시"""
+    return render(request, "helper/canvas.html", {"request_id": request_id})
 
 
-@login_required
 def mypage_view(request):
-    """효자뱃지 개수 / 이달의 효자 랭킹. 데이터는 accounts API를 fetch로 호출해서 채운다."""
+    """TODO: 로그인 필요. accounts API(badges/me, ranking)를 fetch로 불러와 표시"""
     return render(request, "helper/mypage.html")
