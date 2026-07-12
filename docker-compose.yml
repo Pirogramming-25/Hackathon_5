@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-hyoclick}
+      POSTGRES_USER: ${POSTGRES_USER:-hyoclick}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hyoclick}
+    volumes:
+      - hyoclick_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  web:
+    build: .
+    # Dockerfile 의 CMD(migrate + collectstatic + daphne)를 그대로 사용.
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_DEBUG: "1"
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-only-secret-change-me}
+      DJANGO_ALLOWED_HOSTS: "*"
+      POSTGRES_DB: ${POSTGRES_DB:-hyoclick}
+      POSTGRES_USER: ${POSTGRES_USER:-hyoclick}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hyoclick}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  hyoclick_pgdata:

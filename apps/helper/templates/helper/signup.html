@@ -1,0 +1,14 @@
+{% extends "helper/_base.html" %}
+{% load static %}
+{% block content %}
+  <h2>도우미 회원가입</h2>
+  <form id="signup-form" class="auth-form">
+    <label>아이디 <input type="text" name="username" required></label>
+    <label>비밀번호 <input type="password" name="password" required minlength="4"></label>
+    <label>휴대폰 번호 <input type="tel" name="phone_number" placeholder="선택 입력"></label>
+    <button type="submit" class="btn-primary">가입하기</button>
+  </form>
+  <p id="signup-error" class="error"></p>
+  <p>이미 계정이 있으신가요? <a href="{% url 'helper:login' %}">로그인</a></p>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'helper/js/auth.js' %}"></script>{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "reservation/_base.html" %}
+{% block header_title %}예약금 결제{% endblock %}
+{% block content %}
+  <h2>예약금 결제</h2>
+  <p class="desc">예약금은 진료 대기 시간을 줄이기 위해 사용됩니다.</p>
+
+  <div class="price-row">
+    <span>예약금</span>
+    <strong>{{ deposit }}원</strong>
+  </div>
+
+  <form method="post" action="{% url 'reservation:payment' %}">
+    {% csrf_token %}
+    <fieldset class="payment-methods">
+      <legend>결제 수단 선택</legend>
+      <label><input type="radio" name="payment_method" value="card" checked> 카드 결제</label>
+      <label><input type="radio" name="payment_method" value="simple"> 간편결제</label>
+    </fieldset>
+    <!-- TODO(담당자 1): 실제 PG 연동은 하지 않는 목업. 결제하기 버튼은 바로 다음 단계로 이동 -->
+    <button type="submit" class="btn-primary">결제하기</button>
+  </form>
+{% endblock %}
