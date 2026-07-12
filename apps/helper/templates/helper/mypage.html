@@ -1,0 +1,14 @@
+{% extends "helper/_base.html" %}
+{% load static %}
+{% block content %}
+  <h2>마이페이지</h2>
+
+  <div class="badge-count-card">
+    <span>내 효자뱃지</span>
+    <strong id="badge-count">-</strong>
+  </div>
+
+  <h3>이달의 효자 랭킹</h3>
+  <ol id="ranking-list" class="ranking-list"></ol>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'helper/js/mypage.js' %}"></script>{% endblock %}

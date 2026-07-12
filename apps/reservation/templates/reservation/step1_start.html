@@ -1,0 +1,18 @@
+{% extends "reservation/_base.html" %}
+{% block header_title %}서울튼튼병원{% endblock %}
+{% block content %}
+  <div class="hero">
+    <h1>건강한 하루를 위한<br>첫걸음, 서울튼튼병원</h1>
+    <p>편안한 진료와 따뜻한 마음으로 여러분의 건강을 지키겠습니다.</p>
+  </div>
+
+  <div class="notice">
+    <div class="notice-header">
+      <span>공지사항</span>
+      <a href="#">더보기 &gt;</a>
+    </div>
+    <p>5월 진료 일정 안내</p>
+  </div>
+
+  <a class="btn-primary" href="{% url 'reservation:date' %}">예약하기</a>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "reservation/_base.html" %}
+{% block header_title %}날짜 선택{% endblock %}
+{% block content %}
+  <h2>날짜를 선택해주세요</h2>
+  <form method="post" action="{% url 'reservation:date' %}">
+    {% csrf_token %}
+    <!-- TODO(담당자 1): 실제 캘린더 위젯(월 이동, 요일별 그리드 등)으로 교체. 지금은 간단한 날짜 선택 목업 -->
+    <label class="field">
+      예약 날짜
+      <input type="date" name="date" required>
+    </label>
+    <button type="submit" class="btn-primary">다음</button>
+  </form>
+{% endblock %}

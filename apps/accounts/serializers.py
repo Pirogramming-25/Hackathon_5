@@ -1,0 +1,42 @@
+from django.contrib.auth.models import User
+from rest_framework import serializers
+
+from .models import Badge, HelperProfile
+
+
+class SignupSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=150)
+    password = serializers.CharField(write_only=True, min_length=4)
+    phone_number = serializers.CharField(required=False, allow_blank=True, default="")
+
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("이미 사용 중인 아이디입니다.")
+        return value
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data["username"],
+            password=validated_data["password"],
+        )
+        HelperProfile.objects.create(
+            user=user, phone_number=validated_data.get("phone_number", "")
+        )
+        return user
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+
+class BadgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Badge
+        fields = ["id", "help_request", "awarded_at"]
+
+
+class RankingEntrySerializer(serializers.Serializer):
+    helper_id = serializers.IntegerField()
+    username = serializers.CharField()
+    badge_count = serializers.IntegerField()

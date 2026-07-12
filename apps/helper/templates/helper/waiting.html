@@ -1,0 +1,8 @@
+{% extends "helper/_base.html" %}
+{% load static %}
+{% block content %}
+  <h2>대기 중인 도움 요청</h2>
+  <p id="empty-state" class="empty-state">아직 요청이 없어요. 잠시만 기다려주세요.</p>
+  <ul id="request-list" class="request-list"></ul>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'helper/js/waiting.js' %}"></script>{% endblock %}

@@ -1,0 +1,11 @@
+{% csrf_token %}
+<button id="sos-button" type="button" class="sos-button">📷 찰칵! 도와주세요!</button>
+
+<div id="sos-panel" class="sos-panel hidden">
+  <div class="sos-panel-header">
+    <span id="sos-status">도움 요청 중...</span>
+    <button id="sos-close" type="button">닫기</button>
+  </div>
+  <div id="sos-messages" class="sos-messages"></div>
+  <button id="sos-im-fine" type="button" class="sos-im-fine hidden">혼자 해볼게요! (괜찮아요)</button>
+</div>
