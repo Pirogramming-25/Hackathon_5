@@ -11,52 +11,427 @@ https://channels.readthedocs.io/ 의 AsyncJsonWebsocketConsumer 참고)
   - 서버 -> 클라이언트: {"type": "new_request", ...} 같은 형태
 정하고 나면 이 파일 위에 프로토콜을 문서화해두세요.
 """
+import json
+
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+
+from . import services
+from .models import HelpRequest
 
 
 class HelperPoolConsumer(AsyncJsonWebsocketConsumer):
-    """도우미가 접속해서 대기하는 채널.
+    """
+    로그인한 도우미가 접속하는 공용 대기 채널.
 
-    TODO(담당자 3):
-    - connect(): 이 채널을 "도우미 대기 그룹"에 추가
-    - disconnect(): 그룹에서 제거
-    - receive_json(): {"action": "accept", "request_id": N} 같은 메시지를 받아서
-      HelpRequest를 원자적으로 배정 시도 -> 성공/실패를 클라이언트에 응답
-    - 새 요청이 들어왔을 때 그룹 전체에 broadcast 하는 부분(= group_send로
-      호출되는 이벤트 핸들러 메서드)도 필요
+    클라이언트 -> 서버
+
+    요청 수락:
+    {
+        "action": "accept",
+        "request_id": 1
+    }
+
+    서버 -> 클라이언트
+
+    새 도움 요청:
+    {
+        "type": "new_request",
+        "request_id": 1,
+        "reservation_step": "날짜 선택",
+        "screenshot_url": "..."
+    }
+
+    수락 결과:
+    {
+        "type": "accept_result",
+        "success": true,
+        "request_id": 1
+    }
+
+    다른 도우미가 먼저 수락:
+    {
+        "type": "request_taken",
+        "request_id": 1
+    }
     """
 
+    group_name = services.HELPERS_GROUP
+
     async def connect(self):
-        # TODO: group_add 등
+        user = self.scope.get("user")
+
+        # 도우미는 로그인한 상태여야 대기방에 접속할 수 있음
+        if not user or not user.is_authenticated:
+            await self.close(code=4001)
+            return
+
+        await self.channel_layer.group_add(
+            self.group_name,
+            self.channel_name,
+        )
+
         await self.accept()
 
+        await self.send_json(
+            {
+                "type": "connected",
+                "message": "도우미 대기방에 연결되었습니다.",
+            }
+        )
+
     async def disconnect(self, close_code):
-        # TODO: group_discard 등
-        pass
+        await self.channel_layer.group_discard(
+            self.group_name,
+            self.channel_name,
+        )
 
     async def receive_json(self, content, **kwargs):
-        # TODO: action에 따라 분기 처리
-        pass
+        action = content.get("action")
+
+        if action == "accept":
+            await self._handle_accept(content)
+            return
+
+        await self.send_json(
+            {
+                "type": "error",
+                "message": "지원하지 않는 action입니다.",
+            }
+        )
+
+    async def _handle_accept(self, content):
+        request_id = content.get("request_id")
+        user = self.scope.get("user")
+
+        if request_id is None:
+            await self.send_json(
+                {
+                    "type": "accept_result",
+                    "success": False,
+                    "message": "request_id가 필요합니다.",
+                }
+            )
+            return
+
+        success = await self._try_accept(
+            request_id=request_id,
+            helper=user,
+        )
+
+        await self.send_json(
+            {
+                "type": "accept_result",
+                "success": success,
+                "request_id": request_id,
+            }
+        )
+
+        if not success:
+            return
+
+        # 다른 도우미 화면에서 해당 요청 제거
+        await self.channel_layer.group_send(
+            services.HELPERS_GROUP,
+            {
+                "type": "request_taken",
+                "request_id": request_id,
+                "helper_id": user.id,
+            },
+        )
+
+        # 이용자와 도우미가 접속하는 세션방에 매칭 결과 전달
+        await self.channel_layer.group_send(
+            services.session_group_name(request_id),
+            {
+                "type": "matched",
+                "request_id": request_id,
+                "helper_id": user.id,
+                "helper_name": user.username,
+            },
+        )
+
+    @database_sync_to_async
+    def _try_accept(self, request_id, helper):
+        return HelpRequest.try_accept(
+            request_id=request_id,
+            helper=helper,
+        )
+
+    # services.broadcast_new_request()의 group_send에 의해 호출
+    async def new_request(self, event):
+        await self.send_json(
+            {
+                "type": "new_request",
+                "request_id": event["request_id"],
+                "reservation_step": event.get("reservation_step", ""),
+                "screenshot_url": event.get("screenshot_url"),
+                "created_at": event.get("created_at"),
+            }
+        )
+
+    # 다른 도우미가 먼저 수락했을 때 호출
+    async def request_taken(self, event):
+        await self.send_json(
+            {
+                "type": "request_taken",
+                "request_id": event["request_id"],
+                "helper_id": event.get("helper_id"),
+            }
+        )
 
 
 class SessionConsumer(AsyncJsonWebsocketConsumer):
-    """매칭이 성사된 이후 이용자<->도우미가 화면/채팅을 주고받는 채널.
+    """
+    매칭된 이용자와 도우미가 사용하는 요청별 전용 채널.
 
-    TODO(담당자 3):
-    - connect(): url_route 로 넘어온 request_id 기준 세션 그룹에 join
-    - receive_json(): 캔버스 그리기, 채팅, 완료/취소 같은 이벤트를 세션
-      그룹 전체(이용자+도우미)에 릴레이
-    - 완료/취소 시 HelpRequest 상태 갱신까지 여기서 처리할지 결정
+    URL:
+    /ws/session/<request_id>/
+
+    채팅:
+    {
+        "action": "chat",
+        "message": "여기를 눌러주세요."
+    }
+
+    캔버스:
+    {
+        "action": "draw",
+        "shapes": [...]
+    }
+
+    도우미 완료:
+    {
+        "action": "complete"
+    }
+
+    이용자 혼자 진행:
+    {
+        "action": "im_fine"
+    }
     """
 
     async def connect(self):
-        # TODO
+        self.request_id = self.scope["url_route"]["kwargs"]["request_id"]
+
+        exists = await self._request_exists()
+
+        if not exists:
+            await self.close(code=4004)
+            return
+
+        self.group_name = services.session_group_name(
+            self.request_id
+        )
+
+        await self.channel_layer.group_add(
+            self.group_name,
+            self.channel_name,
+        )
+
         await self.accept()
 
+        await self.send_json(
+            {
+                "type": "connected",
+                "request_id": self.request_id,
+                "message": "도움 세션에 연결되었습니다.",
+            }
+        )
+
     async def disconnect(self, close_code):
-        # TODO
-        pass
+        if hasattr(self, "group_name"):
+            await self.channel_layer.group_discard(
+                self.group_name,
+                self.channel_name,
+            )
 
     async def receive_json(self, content, **kwargs):
-        # TODO
-        pass
+        action = content.get("action")
+
+        if action == "chat":
+            await self._relay_chat(content)
+
+        elif action == "draw":
+            await self._handle_draw(content)
+
+        elif action == "complete":
+            await self._handle_complete()
+
+        elif action == "im_fine":
+            await self._handle_cancel()
+
+        else:
+            await self.send_json(
+                {
+                    "type": "error",
+                    "message": "지원하지 않는 action입니다.",
+                }
+            )
+
+    async def _relay_chat(self, content):
+        message = str(content.get("message", "")).strip()
+
+        if not message:
+            return
+
+        user = self.scope.get("user")
+
+        sender_type = (
+            "HELPER"
+            if user and user.is_authenticated
+            else "USER"
+        )
+
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "session_message",
+                "payload": {
+                    "action": "chat",
+                    "sender_type": sender_type,
+                    "message": message,
+                },
+            },
+        )
+
+    async def _handle_draw(self, content):
+        shapes = content.get("shapes", [])
+
+        if not isinstance(shapes, list):
+            await self.send_json(
+                {
+                    "type": "error",
+                    "message": "shapes는 배열이어야 합니다.",
+                }
+            )
+            return
+
+        await self._save_canvas(shapes)
+
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "session_message",
+                "payload": {
+                    "action": "draw",
+                    "shapes": shapes,
+                },
+            },
+        )
+
+    async def _handle_complete(self):
+        success = await self._mark_done()
+
+        if not success:
+            await self.send_json(
+                {
+                    "type": "error",
+                    "message": "완료할 수 없는 요청입니다.",
+                }
+            )
+            return
+
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "session_message",
+                "payload": {
+                    "action": "completed",
+                },
+            },
+        )
+
+    async def _handle_cancel(self):
+        success = await self._cancel_request()
+
+        if not success:
+            await self.send_json(
+                {
+                    "type": "error",
+                    "message": "종료할 수 없는 요청입니다.",
+                }
+            )
+            return
+
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "session_message",
+                "payload": {
+                    "action": "cancelled",
+                },
+            },
+        )
+
+    @database_sync_to_async
+    def _request_exists(self):
+        return HelpRequest.objects.filter(
+            pk=self.request_id
+        ).exists()
+
+    @database_sync_to_async
+    def _save_canvas(self, shapes):
+        updated = HelpRequest.objects.filter(
+            pk=self.request_id
+        ).update(
+            canvas_data=json.dumps(
+                shapes,
+                ensure_ascii=False,
+            )
+        )
+
+        return updated == 1
+
+    @database_sync_to_async
+    def _mark_done(self):
+        try:
+            help_request = HelpRequest.objects.get(
+                pk=self.request_id
+            )
+        except HelpRequest.DoesNotExist:
+            return False
+
+        previous_status = help_request.status
+        help_request.mark_done()
+
+        return (
+            previous_status != help_request.status
+            and help_request.status == HelpRequest.Status.DONE
+        )
+
+    @database_sync_to_async
+    def _cancel_request(self):
+        try:
+            help_request = HelpRequest.objects.get(
+                pk=self.request_id
+            )
+        except HelpRequest.DoesNotExist:
+            return False
+
+        previous_status = help_request.status
+        help_request.cancel()
+
+        return (
+            previous_status != help_request.status
+            and help_request.status
+            == HelpRequest.Status.CANCELLED
+        )
+
+    async def matched(self, event):
+        await self.send_json(
+            {
+                "type": "matched",
+                "request_id": event["request_id"],
+                "helper_id": event.get("helper_id"),
+                "helper_name": event.get("helper_name"),
+            }
+        )
+
+    async def session_message(self, event):
+        await self.send_json(
+            {
+                "type": "session_message",
+                "payload": event["payload"],
+            }
+        )
