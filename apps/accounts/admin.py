@@ -1,5 +1,5 @@
 from django.contrib import admin
+from .models import Badge, HelperProfile
 
-# from .models import Badge, HelperProfile
-# admin.site.register(HelperProfile)
-# admin.site.register(Badge)
+admin.site.register(HelperProfile)
+admin.site.register(Badge)
