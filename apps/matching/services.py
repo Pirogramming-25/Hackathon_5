@@ -1,8 +1,48 @@
-"""
-3. 매칭 로직 + 실시간 통신 담당.
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
-consumers.py 안에 로직을 다 넣어도 되고, 여기에 broadcast 관련 헬퍼 함수를
-분리해서 둬도 됩니다 (예: reservation 앱의 뷰에서 "새 요청 생겼음"을 도우미들에게
-알릴 때 채널 레이어로 group_send 하는 함수 등). 강제 사항은 아니고 필요하면
-채워서 쓰세요.
-"""
+HELPERS_GROUP = "available_helpers"
+
+def session_group_name(request_id):
+    """도움 요청별 이용자, 도우미 전용 그룹 이름"""
+    return f"help_session_{request_id}"
+
+def broadcast_new_request(help_request):
+    """
+    새로운 HelpRequest가 만들어지면 대기 중인 모든 도우미에게 전달한다.
+
+    reservation 담당자가 HelpRequest를 생성한 직후
+    이 함수를 호출한다.
+    """
+    channel_layer = get_channel_layer()
+
+    screenshot_url = None
+    if help_request.screenshot:
+        screenshot_url = help_request.screenshot.url
+
+    async_to_sync(channel_layer.group_send)(
+        HELPERS_GROUP,
+        {
+            "type": "new_request",
+            "request_id": help_request.id,
+            "reservation_step": help_request.reservation_step,
+            "screenshot_url": screenshot_url,
+            "created_at": help_request.created_at.isoformat(),
+        },
+    )
+
+def broadcast_request_taken(request_id, helper_id):
+    """
+    한 명이 요청을 수락하면 다른 도우미들의 목록에서 
+    해당 요청을 제거하도록 알린다.
+    """
+    channel_layer = get_channel_layer()
+
+    async_to_sync(channel_layer.group_send)(
+        HELPERS_GROUP,
+        {
+            "type": "request_taken",
+            "request_id": request_id,
+            "helper_id": helper_id,
+        },
+    )

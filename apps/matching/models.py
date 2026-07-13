@@ -9,7 +9,8 @@ HelpRequest 하나가 "이용자가 SOS 버튼을 눌러서 도우미가 매칭�
 완료(또는 종료)될 때까지"의 세션 전체를 나타냅니다.
 """
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
+from django.utils import timezone
 
 
 class HelpRequest(models.Model):
@@ -52,13 +53,78 @@ class HelpRequest(models.Model):
     def __str__(self):
         return f"HelpRequest#{self.id} [{self.status}]"
 
-    # ------------------------------------------------------------------
-    # TODO(담당자 3): 아래와 같은 동작들이 필요합니다. 메서드로 추가하든,
-    # consumers.py 쪽에 직접 로직을 두든 원하는 방식으로 구현하세요.
-    #
-    # - 도우미가 "수락"을 눌렀을 때: 이미 WAITING 상태인 요청만 MATCHED로
-    #   바꾸고 helper를 지정. 여러 도우미가 동시에 눌러도 한 명만 성공해야
-    #   함 (select_for_update / 조건부 update 같은 방법으로 원자성 보장 필요)
-    # - 완료 처리: status를 DONE으로, completed_at 기록
-    # - 취소("괜찮아요!") 처리: status를 CANCELLED로, completed_at 기록
-    # ------------------------------------------------------------------
+    @classmethod
+    def try_accept(cls, request_id, helper):
+        """
+        WAITING 상태인 요청을 한 명의 도우미에게 원자적으로 배정한다.
+
+        여러 도우미가 동시에 수락해도 
+        select_for_update()로 먼저 접근한 한 명만 성공한다.
+        """
+        if helper is None or not helper.is_authenticated:
+            return False
+        
+        with transaction.atomic():
+            try:
+                help_request = (
+                    cls.objects
+                    .select_for_update()
+                    .get(pk=request_id)
+                )
+            except cls.DoesNotExist:
+                return False
+
+            if (
+                help_request.status != cls.Status.WAITING
+                or help_request.helper_id is not None
+            ):
+                return False
+
+            help_request.helper = helper
+            help_request.status = cls.Status.MATCHED
+            help_request.matched_at = timezone.now()
+
+            help_request.save(
+                update_fields=[
+                    "helper",
+                    "status",
+                    "matched_at",
+                ]
+            )
+
+        return True
+
+    def mark_in_progress(self):
+        if self.status == self.Status.MATCHED:
+            self.status = self.Status.IN_PROGRESS
+            self.save(update_fields=["status"])
+
+    def mark_done(self):
+        if self.status in {
+            self.Status.MATCHED,
+            self.Status.IN_PROGRESS,
+        }:
+            self.status = self.Status.DONE
+            self.completed_at = timezone.now()
+
+            self.save(
+                update_fields=[
+                    "status",
+                    "completed_at",
+                ]
+            )
+            
+    def cancel(self):
+        if self.status not in {
+            self.Status.DONE,
+            self.Status.CANCELLED,
+        }:
+            self.status = self.Status.CANCELLED
+            self.completed_at = timezone.now()
+
+            self.save(
+                update_fields=[
+                    "status",
+                    "completed_at",
+                ]
+            )
