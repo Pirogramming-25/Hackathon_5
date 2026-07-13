@@ -1,0 +1,133 @@
+:root {
+  --navy: #10182b;
+  --indigo: #5b4fe8;
+  --line: #d8dbe8;
+  --muted: #8a8f9c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+  color: var(--navy);
+  background: #ffffff;
+}
+
+.confirm-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--navy);
+}
+
+.confirm-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.confirm-icon {
+  width: 64px;
+  height: 64px;
+  margin: 20px auto 18px;
+  border-radius: 50%;
+  background: #eeecfd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 26px;
+}
+
+.confirm-title .accent {
+  color: var(--indigo);
+}
+
+.confirm-box {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.confirm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  font-size: 14.5px;
+  border-bottom: 1px solid #eef0f5;
+}
+
+.confirm-row:last-child {
+  border-bottom: none;
+  font-weight: 700;
+}
+
+.confirm-row span:first-child {
+  color: var(--muted);
+}
+
+.confirm-wrap {
+  max-width: 420px;
+  margin: 26px auto 0;
+  padding: 0 20px;
+}
+
+.confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  border: 1.4px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--navy);
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.review-chip {
+  max-width: 280px;
+  margin: 40px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #efe9fb;
+  color: #6b4fd6;
+  border: 1px solid #ddd0f5;
+  border-radius: 999px;
+  padding: 11px 20px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  animation: chip-float 2.6s ease-in-out infinite;
+}
+
+.review-chip__icon { display: inline-flex; }
+
+@keyframes chip-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review-chip { animation: none; }
+}
