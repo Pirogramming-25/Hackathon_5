@@ -1,5 +1,103 @@
 {% extends "reservation/_base.html" %}
+{% load static %}
+
+{% block title %}효도클릭 - 피로튼튼병원{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'reservation/css/main.css' %}">
+{% endblock %}
+
 {% block content %}
-  <!-- TODO(담당자 1): 예약 시작(병원 홈) 화면 구성. "예약하기" 버튼은
-       {% url 'reservation:date' %} 로 연결 -->
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="{% url 'reservation:start' %}" class="logo">
+        피로튼튼병원
+      </a>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="navDrawer">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <nav class="nav-drawer" id="navDrawer">
+      <ul>
+        <li><a href="#care">진료안내</a></li>
+        <li><a href="#doctors">의료진소개</a></li>
+        <li><a href="{% url 'reservation:date' %}">예약하기</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-media">
+      <img src="https://images.unsplash.com/photo-1587351021355-a479a299d2f9?q=80&w=1600&auto=format&fit=crop"
+           alt="피로튼튼병원 외경" loading="eager" />
+      <div class="hero-scrim"></div>
+    </div>
+
+    <div class="hero-content">
+      <h1>
+        건강한 하루를 위한<br />
+        첫 걸음, <span class="accent">피로튼튼병원</span>
+      </h1>
+      <p class="hero-desc">
+        정확한 진료에 진심인 마음으로<br />
+        여러분의 건강을 지키겠습니다.
+      </p>
+    </div>
+  </section>
+
+  <section class="quick-actions" aria-label="바로가기 메뉴">
+    <a href="#care" class="action-card">
+      <span class="action-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+          <rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M12 11v5M9.5 13.5h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </span>
+      진료안내
+    </a>
+
+    <a href="#doctors" class="action-card">
+      <span class="action-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+          <circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M5 20c0-3.6 3.13-6 7-6s7 2.4 7 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </span>
+      의료진소개
+    </a>
+
+    <a href="{% url 'reservation:date' %}" class="action-card action-card--primary">
+      <span class="action-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+          <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M3 9h18M8 3v3M16 3v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M8.5 13.5l2.3 2.3L16 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      예약하기
+    </a>
+  </section>
+
+  <div class="review-chip" id="reviewChip" role="button" tabindex="0">
+    <span class="review-chip__icon">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+        <path d="M4 8a2 2 0 0 1 2-2h1.2l.9-1.4A2 2 0 0 1 9.8 3.7h4.4a2 2 0 0 1 1.7.9L16.8 6H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+    </span>
+    찰칵 ! 도와주세요 !
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 피로튼튼병원. All rights reserved.</p>
+  </footer>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'reservation/js/main.js' %}"></script>
 {% endblock %}
