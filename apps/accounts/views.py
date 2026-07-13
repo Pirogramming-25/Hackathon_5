@@ -11,7 +11,7 @@ from .serializers import SignupSerializer, LoginSerializer, BadgeSerializer, Ran
 from django.contrib.auth import login, authenticate, logout
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Count
+from django.db.models import Count, Max
 from django.utils import timezone
 from .models import Badge, HelperProfile
 
@@ -76,10 +76,12 @@ class RankingAPIView(APIView):
         )
         
         #helper별로 묶어서 개수 세고 많은 순으로 정렬
+        #badge_count 내림차순, 동점이면 그 개수를 먼저 채운 사람이 위
+        #뱃지를 1개 이상 받은 도우미만 집계 대상(0개인 도우미는 랭킹에 노출하지 않음)
         ranking = (
             badges_this_month.values("helper_id", "helper__username")
-            .annotate(badge_count=Count("id"))
-            .order_by("-badge_count")
+            .annotate(badge_count=Count("id"), last_awarded=Max("awarded_at"))
+            .order_by("-badge_count", "last_awarded")
         )
         
         # RankingEntrySerializer가 원하는 필드명(username)으로 맞춰서 변환
