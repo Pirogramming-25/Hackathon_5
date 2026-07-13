@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}효도클릭 - 이용자{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'reservation/css/style.css' %}">
+</head>
+<body>
+  {% block content %}{% endblock %}
+
+  {# TODO(담당자 1): SOS 버튼/패널을 여기에 include 하기 #}
+  {# {% include "reservation/_sos_widget.html" %} #}
+
+  <script src="{% static 'reservation/js/sos.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
