@@ -188,12 +188,6 @@ class SessionConsumer(AsyncJsonWebsocketConsumer):
     URL:
     /ws/session/<request_id>/
 
-    채팅:
-    {
-        "action": "chat",
-        "message": "여기를 눌러주세요."
-    }
-
     캔버스:
     {
         "action": "draw",
@@ -249,10 +243,7 @@ class SessionConsumer(AsyncJsonWebsocketConsumer):
     async def receive_json(self, content, **kwargs):
         action = content.get("action")
 
-        if action == "chat":
-            await self._relay_chat(content)
-
-        elif action == "draw":
+        if action == "draw":
             await self._handle_draw(content)
 
         elif action == "complete":
@@ -268,32 +259,6 @@ class SessionConsumer(AsyncJsonWebsocketConsumer):
                     "message": "지원하지 않는 action입니다.",
                 }
             )
-
-    async def _relay_chat(self, content):
-        message = str(content.get("message", "")).strip()
-
-        if not message:
-            return
-
-        user = self.scope.get("user")
-
-        sender_type = (
-            "HELPER"
-            if user and user.is_authenticated
-            else "USER"
-        )
-
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "session_message",
-                "payload": {
-                    "action": "chat",
-                    "sender_type": sender_type,
-                    "message": message,
-                },
-            },
-        )
 
     async def _handle_draw(self, content):
         shapes = content.get("shapes", [])
