@@ -1,7 +1,7 @@
 :root {
 --bg-color: #FAFAFA;
 --btn: #4D56FF;
---help-btn: #8E47C0;
+--help-btn: #4D56FF;
 --text: #141414;
 --btn-gray: #F2F2F2;
 
@@ -41,13 +41,14 @@ color: inherit;
 /*상단 네비게이션*/
 
 .top-nav {
-background: var(--help-btn);
-color: #fff;
+background: top-nav;
+color: #000000;
 padding: 20px 32px;
+box-shadow: var(--shadow);
 }
 
 .top-nav .logo {
-font-size: 20px;
+font-size: 25px;
 font-weight: 700;
 }
 
