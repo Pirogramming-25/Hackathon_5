@@ -14,10 +14,56 @@ toolItems.forEach((item) => {
     });
 });
 
+const pathParts = window.location.pathname
+    .split('/')
+    .filter(Boolean);
+
+const requestId = pathParts[pathParts.length - 1];
+
+const protocol =
+    window.location.protocol === 'https:' ? 'wss' : 'ws';
+
+const sessionSocket = new WebSocket(
+    `${protocol}://${window.location.host}/ws/session/${requestId}/`
+);
+
+sessionSocket.onopen = () => {
+    console.log('도움 세션 웹소켓 연결 성공');
+};
+
+sessionSocket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (
+        data.type === 'session_message' &&
+        data.payload.action === 'cancelled'
+    ) {
+        alert('이용자가 도움을 종료했습니다.');
+        window.location.href = '/';
+    }
+
+    if (
+        data.type === 'session_message' &&
+        data.payload.action === 'completed'
+    ) {
+        alert('도움이 완료되었습니다.');
+        window.location.href = '/';
+    }
+};
+
 const completeBtn = document.querySelector('.btn-complete');
+
 if (completeBtn) {
     completeBtn.addEventListener('click', () => {
-        // TODO: html2canvas로 캔버스 영역 캡처 후 채팅으로 전송
-        alert('완료 버튼 클릭됨 (아직 캡처 기능 미구현)');
+        if (sessionSocket.readyState !== WebSocket.OPEN) {
+            alert('서버 연결 중입니다. 잠시 후 다시 눌러주세요.');
+            return;
+        }
+
+        sessionSocket.send(
+            JSON.stringify({
+                action: 'complete',
+            })
+        );
     });
 }
