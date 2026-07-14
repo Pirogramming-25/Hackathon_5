@@ -20,7 +20,7 @@ position: relative;
 flex: 1 1 400px;
 min-height: 276px;
 border-radius: 20px;
-background: linear-gradient(0deg, #e5dffd 0%, #F7F7F7 100%);
+background: #F1EEFC;
 box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
 padding: 40px;
 overflow: hidden;
