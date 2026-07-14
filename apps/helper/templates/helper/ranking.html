@@ -1,0 +1,55 @@
+{% extends "helper/_base.html" %}
+{% load static %}
+{% block title %}이달의 효자 랭킹 - 효도클릭{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'helper/css/ranking.css' %}">{% endblock %}
+
+{% block content %}
+<div class="ranking-wrapper">
+
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/></svg>
+        이달의 효자 랭킹
+    </h2>
+
+    {# 상위 3명 나중에 연동하기 #}
+    <div class="ranking-top3">
+        <div class="rank-card rank-gold">
+            <span class="rank-num">1</span>
+            <p class="rank-name">김효자</p>
+            <p class="rank-count">30개</p>
+        </div>
+        <div class="rank-card rank-silver">
+            <span class="rank-num">2</span>
+            <p class="rank-name">이효자</p>
+            <p class="rank-count">20개</p>
+        </div>
+        <div class="rank-card rank-bronze">
+            <span class="rank-num">3</span>
+            <p class="rank-name">박효자</p>
+            <p class="rank-count">10개</p>
+        </div>
+    </div>
+
+    {# 4등부터도 나중에 연동하기 #}
+    <div class="ranking-list">
+        <div class="rank-row">
+            <span class="rank-num">4</span>
+            <span class="rank-name">최효자</span>
+            <span class="rank-count">9개</span>
+        </div>
+        <div class="rank-row">
+            <span class="rank-num">5</span>
+            <span class="rank-name">이효자</span>
+            <span class="rank-count">8개</span>
+        </div>
+        <div class="rank-row">
+            <span class="rank-num">6</span>
+            <span class="rank-name">강효자</span>
+            <span class="rank-count">7개</span>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'helper/js/ranking.js' %}"></script>{% endblock %}

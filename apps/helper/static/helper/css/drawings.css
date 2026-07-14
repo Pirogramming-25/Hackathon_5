@@ -1,0 +1,73 @@
+.drawings-wrapper {
+display: flex;
+gap: 20px;
+padding: 32px 20px;
+max-width: 1080px;
+margin: 0 auto;
+align-items: flex-start;
+}
+
+.canvas-area {
+flex: 1;
+aspect-ratio: 1 / 1;
+background: #D9D9D9;
+border-radius: 8px;
+min-height: 400px;
+}
+
+.toolbar {
+width: 220px;
+flex-shrink: 0;
+background: #fff;
+border: 1px solid #eee;
+border-radius: 12px;
+padding: 20px;
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.tool-list {
+list-style: none;
+display: flex;
+flex-direction: column;
+gap: 4px;
+}
+
+.tool-item {
+display: flex;
+align-items: center;
+gap: 14px;
+padding: 16px 12px;
+border-radius: 8px;
+font-size: 18px;
+font-weight: 500;
+cursor: pointer;
+color: var(--text);
+}
+
+.tool-item svg {
+width: 26px;
+height: 26px;
+flex-shrink: 0;
+}
+
+.tool-item:hover {
+background: var(--bg-color);
+}
+
+.tool-item.active {
+background: #EDEBFB;
+color: var(--help-btn);
+}
+
+.toolbar .btn-complete {
+margin-top: 12px;
+background: var(--help-btn);
+color: #fff;
+padding: 16px;
+border-radius: 10px;
+font-size: 17px;
+font-weight: 600;
+width: 100%;
+}

@@ -4,11 +4,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}효도클릭 - 도우미{% endblock %}</title>
+  <title>{% block title %}도우미-효도클릭 {% endblock %}</title>
   <link rel="stylesheet" href="{% static 'helper/css/style.css' %}">
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
-  {# TODO(담당자 2): 로그인 상태일 때 보여줄 상단 네비게이션 등 공통 레이아웃 구성 #}
+
+  {% block nav %}
+  <header class="top-nav">
+    <span class="logo">효도클릭</span>
+  </header>
+  {% endblock %}
+
   {% block content %}{% endblock %}
   {% block extra_js %}{% endblock %}
 </body>

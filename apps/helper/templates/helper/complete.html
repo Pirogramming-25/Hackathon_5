@@ -1,0 +1,23 @@
+{% extends "helper/_base.html" %}
+{% load static %}
+{% block title %}효자 배지 획득 - 효도클릭{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'helper/css/complete.css' %}">{% endblock %}
+
+{% block content %}
+<div class="complete-background">
+    <div class="complete-card">
+        <h2>효자 배지 획득 !</h2>
+
+        <div class="badge-icon">
+            <img src="{% static 'helper/img/badge.png' %}" alt="효자 배지">
+        </div>
+
+        <p>도움을 완료했어요!</p>
+        <p>효자 배지를 획득했습니다.</p>
+
+        <button class="btn-confirm">확인</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'helper/js/complete.js' %}"></script>{% endblock %}

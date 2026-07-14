@@ -1,0 +1,26 @@
+{% extends "helper/_base.html" %}
+{% load static %}
+{% block title %}도움 요청 발생 - 효도클릭{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'helper/css/accept.css' %}">{% endblock %}
+
+{% block content %}
+<div class="accept-background">
+    <div class="accept-card">
+        <h2>도움 요청 발생 !</h2>
+
+        <div class="badge-icon">
+            <img src="{% static 'helper/img/badge.png' %}" alt="효자 배지">
+        </div>
+
+        <p>수락 버튼을 눌러</p>
+        <p>실시간 도움을 시작해주세요.</p>
+
+        <div class="accept-actions">
+            <button class="btn-accept">수락</button>
+            <button class="btn-reject">거절</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'helper/js/accept.js' %}"></script>{% endblock %}
