@@ -9,10 +9,10 @@ from .models import Badge, HelperProfile
 
 
 class SignupSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=150)
     username = serializers.CharField(max_length=150)
     password = serializers.CharField(write_only=True, min_length=4)
-    phone_number = serializers.CharField(required=False, allow_blank=True, default="")
-
+    
     #validate_username (아이디 중복 체크)
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
@@ -24,11 +24,9 @@ class SignupSerializer(serializers.Serializer):
         user = User.objects.create_user(
             username=validated_data["username"],
             password=validated_data["password"],
+            first_name=validated_data["name"],
         )
-        HelperProfile.objects.create(
-            user=user,
-            phone_number=validated_data.get("phone_number", ""),
-        )
+        HelperProfile.objects.create(user=user)
         return user
 
 class LoginSerializer(serializers.Serializer):

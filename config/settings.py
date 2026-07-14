@@ -147,6 +147,9 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # whitenoise가 collectstatic 결과물을 직접 서빙 (Railway엔 별도 CDN/nginx가 없어서 필요)
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
@@ -155,6 +158,10 @@ STORAGES = {
 # 이용자 화면 스크린샷(HelpRequest.screenshot) 저장 위치.
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# SOS 스크린샷(html2canvas로 캡처한 전체 페이지 PNG, base64)이 Django 기본값인
+# 2.5MB를 쉽게 넘어서 sos_request 요청이 RequestDataTooBig으로 거부되는 걸 방지.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 15 * 1024 * 1024  # 15MB
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
