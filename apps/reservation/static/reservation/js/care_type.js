@@ -98,19 +98,3 @@ confirmBtn.addEventListener("click", () => {
 
 renderTabs();
 renderSymptoms();
-
-const reviewChip = document.getElementById("reviewChip");
-
-function handleReviewChipActivate() {
-  console.log(".");
-}
-
-if (reviewChip) {
-  reviewChip.addEventListener("click", handleReviewChipActivate);
-  reviewChip.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleReviewChipActivate();
-    }
-  });
-}
