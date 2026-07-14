@@ -1,1 +1,99 @@
-/* TODO(담당자 2): 도우미 화면 스타일을 자유롭게 구성하세요. */
+:root {
+--bg-color: #FAFAFA;
+--btn: #4D56FF;
+--help-btn: #8E47C0;
+--text: #141414;
+--btn-gray: #F2F2F2;
+
+--radius: 10px;
+--shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+}
+
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
+body {
+font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+background: var(--bg-color);
+color: var(--text);
+line-height: 1.5;
+}
+
+button {
+font-family: inherit;
+cursor: pointer;
+border: none;
+background: none;
+}
+
+input {
+font-family: inherit;
+}
+
+a {
+text-decoration: none;
+color: inherit;
+}
+
+/*상단 네비게이션*/
+
+.top-nav {
+background: var(--help-btn);
+color: #fff;
+padding: 20px 32px;
+}
+
+.top-nav .logo {
+font-size: 20px;
+font-weight: 700;
+}
+
+/*accept / complete 화면 공용 */
+
+.accept-background,
+.complete-background {
+position: fixed;
+inset: 0;
+background: rgba(20, 20, 20, 0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+
+.accept-card,
+.complete-card {
+width: 625px;
+background: var(--bg-color, #FAFAFA);
+border-radius: 10px;
+box-shadow: var(--shadow);
+padding: 48px 32px;
+text-align: center;
+max-width: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.accept-card h2,
+.complete-card h2 {
+font-size: 34px;
+font-weight: 700;
+margin-bottom: 36px;
+}
+
+.badge-icon img {
+width: 220px;
+height: 220px;
+object-fit: contain;
+margin: 0 auto 20px;
+}
+
+.accept-card p,
+.complete-card p {
+font-size: 14px;
+color: #555;
+}

@@ -1,0 +1,151 @@
+.mypage-wrapper {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    min-height: 276px;
+    padding: 46px 60px;
+    gap: 30px;
+    border-radius: 20px;
+    background: #F7F7F7;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.profile-img {
+    width: 186px;
+    height: 186px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: var(--btn-gray);
+    flex-shrink: 0;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-name {
+    font-weight: 700;
+    font-size: 28px;
+}
+
+.profile-sub {
+    font-size: 18px;
+    color: #777;
+    margin-top: 8px;
+}
+
+.profile-btn {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.profile-btn button {
+    width: auto;
+    padding: 16px 28px;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.btn-editprofile {
+    background: var(--help-btn);
+    color: #fff;
+}
+
+.btn-logout {
+    background: var(--btn-gray);
+    color: var(--text);
+}
+
+/* 배지 카드 - 프로필 카드와 폭/스타일 통일 */
+.badge-card {
+    width: 100%;
+    background: #F7F7F7;
+    border-radius: 20px;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+    padding: 32px 60px;
+}
+
+.badge-card h3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.badge-count-tag {
+    display: inline-block;
+    background: #EDEBFB;
+    color: var(--help-btn);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-left: 4px;
+}
+
+.badge-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.carousel-btn {
+    color: var(--text);
+    padding: 8px;
+    flex-shrink: 0;
+}
+
+.badge-list {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-right: 20px;
+    scrollbar-width: none;       
+    -ms-overflow-style: none;  
+}
+
+.badge-list::-webkit-scrollbar {
+    display: none;              
+}
+
+.badge-item {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    min-width: 150px;
+    flex-shrink: 0;
+}
+
+.badge-thumb {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin: 0 auto 8px;
+}
+
+.badge-date {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.badge-desc {
+    font-size: 13px;
+    color: #777;
+    margin-top: 2px;
+}

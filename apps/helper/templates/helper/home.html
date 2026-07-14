@@ -1,0 +1,71 @@
+{% extends "helper/_base.html" %}
+{% load static %}
+{% block title %}홈화면 - 효도클릭{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'helper/css/home.css' %}">{% endblock %}
+
+{% block content %}
+<div class="home-wrapper">
+
+    <div class="home-top">
+        <div class="welcome-card">
+            <p>오늘도 따뜻한 도움을</p>
+            <p>기다리는 분들이 있어요 💜</p>
+            <img src="{% static 'helper/img/할머니와 딸.png' %}" alt="도움 받는 모습의 이미지" class="welcome-image">
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-top">
+                <div class="profile-img"></div>
+                <div class="profile-text">
+                    <p class="profile-name">김효자님</p>
+                    <p class="badge-count">{{ badge_count }}개 배지 보유중</p>
+                </div>
+            </div>
+            <button class="btn-mypage">마이페이지 바로가기</button>
+        </div>
+    </div>
+
+    <div class="home-bottom">
+        <div class="info-card">
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mouse-pointer-2"><path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"/></svg>
+                효도클릭이란
+            </h3>
+            <p>효도클릭은 디지털 기기 사용이 어려운 어르신과 정보 취약 계층이<br>
+                실시간으로 도움을 받을 수 있도록 도우미와 연결해주는 서비스입니다.<br>
+                사용자는 현재 화면을 스크린샷으로 공유하고,<br>
+                도우미는 화면 위에 직접 동그라미, 화살표, 메모 등을 표시하며 안내합니다.<br>
+                이를 통해 말로 설명하기 어려운 상황에서도 쉽고 정확하게 문제를 해결하고,<br>
+                누구나 디지털 서비스를 편리하게 이용할 수 있도록 지원합니다.</p>
+        </div>
+
+        <div class="ranking-card">
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/></svg>
+                이달의 효자 랭킹
+            </h3>
+
+            {# TODO: RankingAPIView 연동 후 for문으로 교체 #}
+            <div class="home-rank-list">
+                <div class="home-rank-item rank-gold">
+                    <span class="rank-num">1</span>
+                    <span class="rank-name">김효자</span>
+                </div>
+                <div class="home-rank-item rank-silver">
+                    <span class="rank-num">2</span>
+                    <span class="rank-name">이효자</span>
+                </div>
+                <div class="home-rank-item rank-bronze">
+                    <span class="rank-num">3</span>
+                    <span class="rank-name">박효자</span>
+                </div>
+            </div>
+
+            <button class="btn-view-ranking">전체 랭킹 보기</button>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'helper/js/home.js' %}"></script>{% endblock %}
