@@ -1,3 +1,20 @@
-// TODO(담당자 2): 로그인/회원가입 폼 제출 -> accounts API(POST
-// /api/accounts/login/, /api/accounts/signup/)로 fetch 호출 -> 성공 시
-// /helper/ 로 이동, 실패 시 에러 메시지 표시
+// 뒤로가기 버튼
+const backBtn = document.querySelector('.btn-back');
+if (backBtn) {
+    backBtn.addEventListener('click', () => {
+        history.back();
+    });
+}
+
+// 비밀번호 숨기기
+const toggleBtn = document.querySelector('.btn-toggle-password');
+if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+        const passwordInput = document.querySelector('#password');
+        if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        } else {
+        passwordInput.type = 'password';
+        }
+    });
+}

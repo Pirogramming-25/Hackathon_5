@@ -11,4 +11,8 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("session/<int:request_id>/", views.canvas_view, name="canvas"),
     path("mypage/", views.mypage_view, name="mypage"),
+    path("myinfo/", views.myinfo_view, name="myinfo"),
+    path("ranking/", views.ranking_view, name="ranking"),
+    path("accept/", views.accept_view, name="accept"),
+    path("complete/", views.complete_view, name="complete"),
 ]

@@ -1,0 +1,36 @@
+{% extends "helper/_base.html" %}
+{% load static %}
+{% block title %}프로필 수정 - 효도클릭{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'helper/css/myinfo.css' %}">{% endblock %}
+
+{% block content %}
+<div class="myinfo-wrapper">
+
+    <div class="profile-card">
+        <div class="profile-img"></div>
+
+        <div class="profile-info">
+            <p class="profile-name">김효자님</p>
+            <p class="profile-sub">안녕하세요 김효자입니다.</p> 
+        </div>
+    </div>
+
+    <div class="profile-edit-card">
+        <form id="myinfo-form" class="edit-form">
+            <label for="name">이름</label>
+            <input type="text" name="name" id="name">
+
+            <label for="intro">소개글</label>
+            <input type="text" name="intro" id="intro">
+
+            <label for="profile_image">프로필 사진</label>
+            <input type="file" name="profile_image" id="profile_image">
+
+            <button type="submit" class="edit-complete-btn">프로필 수정 완료</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'helper/js/myinfo.js' %}"></script>{% endblock %}
