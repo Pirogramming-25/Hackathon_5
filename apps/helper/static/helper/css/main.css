@@ -2,7 +2,6 @@
 position: relative;
 }
 
-/* 이미지 + 오버레이를 감싸는 영역 (여기 안에서만 오버레이가 덮음) */
 .main-hero {
 position: relative;
 width: 100%;
@@ -77,7 +76,6 @@ margin-top: 8px;
 cursor: pointer
 }
 
-/* 버튼 영역 - main-hero 바깥, 자연스럽게 이미지 아래로 위치 */
 .main-button {
 max-width: 1080px;
 margin: 28px auto 0;
