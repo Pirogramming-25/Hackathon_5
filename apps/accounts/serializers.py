@@ -1,7 +1,5 @@
 """
 4. 백엔드/인프라 담당.
-
-필드(입력/출력 형태)만 정의해뒀고, 실제 검증/생성 로직은 TODO입니다.
 DRF 공식 문서: https://www.django-rest-framework.org/api-guide/serializers/
 """
 from django.contrib.auth.models import User
@@ -15,9 +13,23 @@ class SignupSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, min_length=4)
     phone_number = serializers.CharField(required=False, allow_blank=True, default="")
 
-    # TODO: validate_username (아이디 중복 체크 등)
-    # TODO: create (User.objects.create_user + HelperProfile.objects.create)
+    #validate_username (아이디 중복 체크)
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("이미 사용 중인 아이디입니다.")
+        return value
 
+    #create (User.objects.create_user + HelperProfile.objects.create)
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data["username"],
+            password=validated_data["password"],
+        )
+        HelperProfile.objects.create(
+            user=user,
+            phone_number=validated_data.get("phone_number", ""),
+        )
+        return user
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -34,3 +46,6 @@ class RankingEntrySerializer(serializers.Serializer):
     helper_id = serializers.IntegerField()
     username = serializers.CharField()
     badge_count = serializers.IntegerField()
+
+
+
