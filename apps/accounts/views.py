@@ -1,6 +1,4 @@
 """
-4. 백엔드/인프라 담당 API.
-
 urls.py 가 아래 클래스 이름들을 이미 라우팅해뒀으니 클래스명은 유지하고
 내용을 채우면 됩니다. Django 인증: https://docs.djangoproject.com/en/5.2/topics/auth/default/
 DRF APIView: https://www.django-rest-framework.org/api-guide/views/
@@ -13,8 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count, Max
 from django.utils import timezone
-from .models import Badge, HelperProfile
-
+from .models import Badge
 
 @method_decorator(csrf_exempt, name="dispatch")
 class SignupAPIView(APIView):
