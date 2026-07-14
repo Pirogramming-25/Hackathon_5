@@ -81,8 +81,7 @@ color: #999;
 .btn-signup {
 margin-top: 24px;
 border-radius: 10px;
-border: 1px solid #A6ABFC;
-background: var(--btn, #4D56FF);
+background: var(--accent);
 box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 color: #fff;
 padding: 18px;
