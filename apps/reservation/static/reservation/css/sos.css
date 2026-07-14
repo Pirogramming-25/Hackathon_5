@@ -1,0 +1,88 @@
+.sos-widget {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 200;
+}
+
+.sos-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #efe9fb;
+  color: #6b4fd6;
+  border: 1px solid #ddd0f5;
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(91, 79, 232, 0.18);
+}
+
+.sos-panel {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 43, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+
+.sos-panel[hidden] {
+  display: none;
+}
+
+.sos-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.sos-panel__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #10182b;
+}
+
+.sos-panel__close {
+  border: none;
+  background: none;
+  color: #8a8f9c;
+  cursor: pointer;
+  display: flex;
+}
+
+.sos-panel__body {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 24px;
+  width: min(320px, 84vw);
+  text-align: center;
+}
+
+.sos-panel__desc {
+  font-size: 13.5px;
+  color: #6b7280;
+  margin: 0 0 20px;
+}
+
+.sos-spinner {
+  width: 34px;
+  height: 34px;
+  margin: 0 auto;
+  border: 3px solid #e7eaf3;
+  border-top-color: #5b4fe8;
+  border-radius: 50%;
+  animation: sos-spin 0.8s linear infinite;
+}
+
+@keyframes sos-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sos-spinner { animation: none; }
+}
