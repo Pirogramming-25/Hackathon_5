@@ -91,3 +91,8 @@ font-size: 18px;
 font-weight: 600;
 width: 100%;
 }
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
