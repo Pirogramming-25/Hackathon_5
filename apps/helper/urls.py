@@ -15,4 +15,5 @@ urlpatterns = [
     path("ranking/", views.ranking_view, name="ranking"),
     path("accept/", views.accept_view, name="accept"),
     path("complete/", views.complete_view, name="complete"),
+    path("main/", views.main_view, name="main"),
 ]

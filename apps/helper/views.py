@@ -56,3 +56,7 @@ def accept_view(request):
 def complete_view(request):
     """TODO: 효자 배지 획득 완료 모달 화면"""
     return render(request, "helper/complete.html")
+
+def main_view(request):
+    """서비스 진입 화면"""
+    return render(request, "helper/main.html")
