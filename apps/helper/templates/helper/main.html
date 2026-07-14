@@ -1,0 +1,38 @@
+{% extends "helper/_base.html" %}
+{% load static %}
+{% block title %}효도클릭{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'helper/css/main.css' %}">{% endblock %}
+
+{% block nav %}
+<header class="top-nav">
+    <span class="logo">효도클릭</span>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="main-hero">
+        <img src="{% static 'helper/img/hyoclick-background.png' %}" alt="효도클릭 배경화면" class="main-image">
+
+        <div class="main-overlay">
+            <h1>효도 클릭</h1>
+            <p>클릭 한 번으로 누군가의 디지털 세상을 밝혀주세요!</p>
+            <p>효도클릭으로 효자 배지도 모으고, 이달의 효자에도 도전해 보세요.</p>
+            <p>당신의 작은 클릭이 누군가에게는 큰 도움이 됩니다.</p>
+
+            <div class="main-storelist">사용 가능한 매장</div>
+            <div class="main-storelink">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mouse-pointer-2"><path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"/></svg>
+                피로튼튼병원
+            </div>
+        </div>
+    </div>
+
+    <div class="main-button">
+        <button class="btn-signup">회원가입</button>
+        <button class="btn-login">로그인</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'helper/js/main.js' %}"></script>{% endblock %}
