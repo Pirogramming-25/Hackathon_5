@@ -9,11 +9,19 @@ SOS 버튼을 눌렀을 때 matching 앱의 HelpRequest 를 생성해서 도우�
 알리는 부분(sos_request)은 담당자 3(매칭)과 필드/이벤트 형식을 맞춰야 합니다.
 공통 계약: apps/matching/models.py 의 HelpRequest 필드 참고.
 """
+import base64
+import json
+import uuid
+
+from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+
+from apps.matching.models import HelpRequest
+from apps.matching.services import broadcast_new_request
 
 
 class StartView(View):
@@ -65,12 +73,39 @@ class ConfirmView(View):
 @csrf_exempt
 @require_POST
 def sos_request(request):
-    """'찰칵! 도와주세요!' 버튼 클릭 시 호출.
+    """'찰칵! 도와주세요!' 버튼 클릭 시 호출."""
+    try:
+        payload = json.loads(request.body)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"error": "invalid_json"}, status=400)
 
-    TODO:
-    - 이용자 세션 키 확보 (없으면 발급)
-    - matching.HelpRequest 생성 (screenshot, reservation_step 등)
-    - 도우미들에게 알림(웹소켓 broadcast) — 담당자 3의 구현과 연결
-    - {"request_id": ...} JSON 응답
-    """
-    return JsonResponse({}, status=501)
+    screenshot_data_url = payload.get("screenshot") or ""
+    reservation_step = payload.get("reservation_step") or ""
+
+    if not request.session.session_key:
+        request.session.create()
+
+    help_request = HelpRequest(
+        user_session_key=request.session.session_key,
+        reservation_step=reservation_step,
+    )
+
+    if screenshot_data_url.startswith("data:image"):
+        try:
+            header, encoded = screenshot_data_url.split(",", 1)
+            ext = header.split("/")[1].split(";")[0]
+            image_bytes = base64.b64decode(encoded)
+        except (ValueError, IndexError, base64.binascii.Error):
+            return JsonResponse({"error": "invalid_screenshot"}, status=400)
+
+        help_request.screenshot.save(
+            f"{uuid.uuid4().hex}.{ext}",
+            ContentFile(image_bytes),
+            save=False,
+        )
+
+    help_request.save()
+
+    broadcast_new_request(help_request)
+
+    return JsonResponse({"request_id": help_request.id})
