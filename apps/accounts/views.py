@@ -5,13 +5,19 @@ DRF APIView: https://www.django-rest-framework.org/api-guide/views/
 """
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import SignupSerializer, LoginSerializer, BadgeSerializer, RankingEntrySerializer
+from .serializers import (
+    SignupSerializer,
+    LoginSerializer,
+    BadgeSerializer,
+    RankingEntrySerializer,
+    ProfileUpdateSerializer,
+)
 from django.contrib.auth import login, authenticate, logout
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count, Max
 from django.utils import timezone
-from .models import Badge
+from .models import Badge, HelperProfile
 
 @method_decorator(csrf_exempt, name="dispatch")
 class SignupAPIView(APIView):
@@ -76,22 +82,62 @@ class RankingAPIView(APIView):
         #badge_count 내림차순, 동점이면 그 개수를 먼저 채운 사람이 위
         #뱃지를 1개 이상 받은 도우미만 집계 대상(0개인 도우미는 랭킹에 노출하지 않음)
         ranking = (
-            badges_this_month.values("helper_id", "helper__username")
+            badges_this_month.values("helper_id", "helper__username", "helper__first_name")
             .annotate(badge_count=Count("id"), last_awarded=Max("awarded_at"))
             .order_by("-badge_count", "last_awarded")
         )
-        
+
         # RankingEntrySerializer가 원하는 필드명(username)으로 맞춰서 변환
         data = [
             {
                 "helper_id": row["helper_id"],
                 "username": row["helper__username"],
+                "name": row["helper__first_name"] or row["helper__username"],
                 "badge_count": row["badge_count"],
             }
             for row in ranking
         ]
         serializer = RankingEntrySerializer(data, many=True)
         return Response(serializer.data)
+
+
+def _serialize_profile(user):
+    profile, _ = HelperProfile.objects.get_or_create(user=user)
+    return {
+        "name": user.first_name,
+        "intro": profile.intro,
+        "profile_image": profile.profile_image.url if profile.profile_image else None,
+    }
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class MyProfileAPIView(APIView):
+    #도우미 프로필 조회/수정. GET은 현재 값, PATCH는 이름/소개글/프로필 사진 수정.
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=401)
+        return Response(_serialize_profile(request.user))
+
+    def patch(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=401)
+
+        serializer = ProfileUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        if data.get("name"):
+            request.user.first_name = data["name"]
+            request.user.save(update_fields=["first_name"])
+
+        profile, _ = HelperProfile.objects.get_or_create(user=request.user)
+        if "intro" in data:
+            profile.intro = data["intro"]
+        if "profile_image" in data:
+            profile.profile_image = data["profile_image"]
+        profile.save()
+
+        return Response(_serialize_profile(request.user))
 
 
 class EnsureSessionAPIView(APIView):

@@ -43,7 +43,14 @@ class BadgeSerializer(serializers.ModelSerializer):
 class RankingEntrySerializer(serializers.Serializer):
     helper_id = serializers.IntegerField()
     username = serializers.CharField()
+    name = serializers.CharField()
     badge_count = serializers.IntegerField()
+
+
+class ProfileUpdateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=150, required=False, allow_blank=True)
+    intro = serializers.CharField(max_length=200, required=False, allow_blank=True)
+    profile_image = serializers.ImageField(required=False)
 
 
 
