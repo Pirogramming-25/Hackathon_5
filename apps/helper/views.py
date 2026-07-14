@@ -5,7 +5,12 @@ urls.py 가 아래 함수 이름들을 이미 라우팅해뒀으니 이름은 �
 채우면 됩니다. 로그인/회원가입 "실제 처리"는 accounts 앱의 API를 fetch()로
 호출하는 방식(담당자 4와 계약)으로 구현하는 걸 추천합니다.
 """
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Max
 from django.shortcuts import render
+from django.utils import timezone
+
+from apps.accounts.models import Badge, HelperProfile
 
 
 def login_view(request):
@@ -23,9 +28,28 @@ def logout_view(request):
     pass
 
 
+@login_required
 def waiting_view(request):
-    """TODO: 로그인 필요. 대기 화면 (새 요청은 ws/helpers/ 로 실시간 수신)"""
-    return render(request, "helper/home.html")
+    """로그인 필요. 대기 화면 (새 요청은 ws/helpers/ 로 실시간 수신)"""
+    profile, _ = HelperProfile.objects.get_or_create(user=request.user)
+    badge_count = Badge.objects.filter(helper=request.user).count()
+
+    now = timezone.now()
+    top_ranking = (
+        Badge.objects.filter(
+            awarded_at__year=now.year,
+            awarded_at__month=now.month,
+        )
+        .values("helper__first_name", "helper__username")
+        .annotate(badge_count=Count("id"), last_awarded=Max("awarded_at"))
+        .order_by("-badge_count", "last_awarded")[:3]
+    )
+
+    return render(
+        request,
+        "helper/home.html",
+        {"profile": profile, "badge_count": badge_count, "top_ranking": top_ranking},
+    )
 
 
 def canvas_view(request, request_id):
@@ -34,14 +58,18 @@ def canvas_view(request, request_id):
     return render(request, "helper/drawings.html", {"request_id": request_id})
 
 
+@login_required
 def mypage_view(request):
-    """TODO: 로그인 필요. accounts API(badges/me, ranking)를 fetch로 불러와 표시"""
-    return render(request, "helper/mypage.html")
+    """배지 목록은 accounts API(badges/me)를 JS에서 fetch로 불러와 표시"""
+    profile, _ = HelperProfile.objects.get_or_create(user=request.user)
+    return render(request, "helper/mypage.html", {"profile": profile})
 
 
+@login_required
 def myinfo_view(request):
-    """TODO: 로그인 필요. 프로필 수정 화면"""
-    return render(request, "helper/myinfo.html")
+    """프로필 수정 화면"""
+    profile, _ = HelperProfile.objects.get_or_create(user=request.user)
+    return render(request, "helper/myinfo.html", {"profile": profile})
 
 
 def ranking_view(request):
