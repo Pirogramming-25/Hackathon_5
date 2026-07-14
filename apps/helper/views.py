@@ -107,5 +107,7 @@ def complete_view(request):
     return render(request, "helper/complete.html")
 
 def main_view(request):
-    """서비스 진입 화면"""
+    """서비스 진입 화면. 이미 로그인된 도우미면 홈(대기 화면)으로 바로 이동."""
+    if request.user.is_authenticated:
+        return redirect("helper:waiting")
     return render(request, "helper/main.html")
