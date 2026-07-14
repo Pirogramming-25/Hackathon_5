@@ -34,7 +34,10 @@ let startY = 0;
 
 function resizeCanvas() {
     if (!canvas || !canvasArea) return;
-    const rect = canvasArea.getBoundingClientRect();
+    const target = (screenshotImg && screenshotImg.complete && screenshotImg.naturalWidth > 0)
+        ? screenshotImg
+        : canvasArea;
+    const rect = target.getBoundingClientRect();
     canvas.width = rect.width;
     canvas.height = rect.height;
     redraw();

@@ -25,12 +25,12 @@ user-select: none;
 }
 
 .canvas-area .draw-canvas {
-position: absolute;
-inset: 0;
-width: 100%;
-height: 100%;
-cursor: crosshair;
-touch-action: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: crosshair;
+    touch-action: none;
+  /* width/height: 100% 제거하고 JS에서 style.width/height도 이미지 크기로 지정 */
 }
 
 .toolbar {
