@@ -25,6 +25,7 @@ const annotationCtx = annotationCanvas ? annotationCanvas.getContext("2d") : nul
 
 let sosSocket = null;
 let lastShapes = [];
+let isMatched = false;
 
 function resizeAnnotationCanvas() {
   if (!annotationCanvas) return;
@@ -209,6 +210,7 @@ function connectSession(requestId) {
     }
 
     if (data.type === "matched") {
+      isMatched = true;
       setStatus(`${data.helper_name || "도우미"}님이 연결됐어요`);
       return;
     }
@@ -251,6 +253,7 @@ async function startSosFlow() {
   }
 
   clearShapes();
+  isMatched = false;
   sosComplete.hidden = false;
   setStatus("화면을 캡처하고 있어요");
 
@@ -279,6 +282,7 @@ function endSession() {
     sosSocket = null;
   }
   clearShapes();
+  isMatched = false;
   sosComplete.hidden = true;
 }
 
@@ -286,11 +290,15 @@ if (sosTrigger) {
   sosTrigger.addEventListener("click", startSosFlow);
 }
 
-// "완료": 도움이 끝났다는 뜻으로 완료 처리(효자 배지 지급)하고 화면 위 도구를 지운다.
+// "완료": 도우미가 아직 수락하기 전이면 요청 자체를 취소(im_fine)해서 대기 중인
+// 도우미들의 수락/거절 화면도 사라지게 하고, 이미 매칭된 뒤라면 도움을 완료
+// 처리(complete, 효자 배지 지급)한다. 어느 쪽이든 화면 위 도구는 즉시 지운다.
 if (sosComplete) {
   sosComplete.addEventListener("click", () => {
     if (sosSocket && sosSocket.readyState === WebSocket.OPEN) {
-      sosSocket.send(JSON.stringify({ action: "complete" }));
+      sosSocket.send(
+        JSON.stringify({ action: isMatched ? "complete" : "im_fine" })
+      );
     }
     setStatus(null);
     endSession();

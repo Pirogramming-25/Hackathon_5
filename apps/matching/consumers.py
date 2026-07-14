@@ -54,6 +54,12 @@ class HelperPoolConsumer(AsyncJsonWebsocketConsumer):
         "type": "request_taken",
         "request_id": 1
     }
+
+    이용자가 매칭 전에 요청을 취소:
+    {
+        "type": "request_cancelled",
+        "request_id": 1
+    }
     """
 
     group_name = services.HELPERS_GROUP
@@ -177,6 +183,16 @@ class HelperPoolConsumer(AsyncJsonWebsocketConsumer):
                 "type": "request_taken",
                 "request_id": event["request_id"],
                 "helper_id": event.get("helper_id"),
+            }
+        )
+
+    # 이용자가 매칭 전에 요청을 취소했을 때 호출 (수락/거절 화면을 보고 있는
+    # 도우미들에게 알려서 화면을 닫게 한다)
+    async def request_cancelled(self, event):
+        await self.send_json(
+            {
+                "type": "request_cancelled",
+                "request_id": event["request_id"],
             }
         )
 
@@ -326,6 +342,18 @@ class SessionConsumer(AsyncJsonWebsocketConsumer):
                 "payload": {
                     "action": "cancelled",
                 },
+            },
+        )
+
+        # 아직 매칭 전이었다면 수락/거절 화면을 보고 있는 도우미들에게도
+        # 알려서 화면을 닫게 한다.
+        # self.request_id는 re_path에서 캡처된 문자열이므로, 클라이언트가
+        # new_request로 받아 들고 있는 숫자 request_id와 비교할 수 있도록 int로 변환한다.
+        await self.channel_layer.group_send(
+            services.HELPERS_GROUP,
+            {
+                "type": "request_cancelled",
+                "request_id": int(self.request_id),
             },
         )
 
