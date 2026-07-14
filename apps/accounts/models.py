@@ -6,21 +6,22 @@
 """
 from django.conf import settings
 from django.db import models
+import uuid
 
+def profile_image_upload_to(instance, filename):
+    ext = filename.rsplit(".", 1)[-1] if "." in filename else "jpg"
+    return f"profiles/{uuid.uuid4().hex}.{ext}"
 
 class HelperProfile(models.Model):
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE, 
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
         related_name="helper_profile"
     )
-    phone_number = models.CharField(max_length=20, blank=True, default="")
-    # TODO: 실제 SMS/PASS 본인인증 연동 후 True 로 전환
-    is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     intro = models.CharField(max_length=200, blank=True, default="")
-    profile_image = models.ImageField(upload_to="profiles/%Y/%m/%d/", null=True, blank=True)
-
+    profile_image = models.ImageField(upload_to=profile_image_upload_to, null=True, blank=True)
+    
     def __str__(self):
         return f"{self.user.username}의 프로필"
 
