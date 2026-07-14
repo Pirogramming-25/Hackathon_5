@@ -34,6 +34,8 @@ if (acceptBtn) {
     });
 }
 
+let acceptedByMe = false;
+
 helperSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
@@ -42,6 +44,7 @@ helperSocket.onmessage = (event) => {
         data.request_id === currentRequestId
     ) {
         if (data.success) {
+            acceptedByMe = true;
             sessionStorage.removeItem("currentHelpRequest");
 
             window.location.href =
@@ -49,23 +52,29 @@ helperSocket.onmessage = (event) => {
         } else {
             alert("이미 다른 도우미가 수락한 요청입니다.");
             sessionStorage.removeItem("currentHelpRequest");
-            window.location.href = "/";
+            window.location.href = "/waiting/";
         }
+        return;
     }
 
     if (
         data.type === "request_taken" &&
         data.request_id === currentRequestId
     ) {
+        // 내가 방금 수락에 성공한 요청도 대기방 전체에 request_taken이 브로드캐스트되므로,
+        // 내가 수락한 경우에는 무시한다 (그렇지 않으면 "다른 도우미가 먼저 수락했다"는
+        // 잘못된 알림이 뜬다).
+        if (acceptedByMe) return;
+
         alert("다른 도우미가 먼저 수락했습니다.");
         sessionStorage.removeItem("currentHelpRequest");
-        window.location.href = "/";
+        window.location.href = "/waiting/";
     }
 };
 
 if (rejectBtn) {
     rejectBtn.addEventListener("click", () => {
         sessionStorage.removeItem("currentHelpRequest");
-        window.location.href = "/";
+        window.location.href = "/waiting/";
     });
 }

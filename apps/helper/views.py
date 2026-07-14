@@ -5,13 +5,16 @@ urls.py 가 아래 함수 이름들을 이미 라우팅해뒀으니 이름은 �
 채우면 됩니다. 로그인/회원가입 "실제 처리"는 accounts 앱의 API를 fetch()로
 호출하는 방식(담당자 4와 계약)으로 구현하는 걸 추천합니다.
 """
+import json
+
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Max
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from apps.accounts.models import Badge, HelperProfile
+from apps.matching.models import HelpRequest
 
 
 def login_view(request):
@@ -54,10 +57,26 @@ def waiting_view(request):
     )
 
 
+@login_required
 def canvas_view(request, request_id):
-    """TODO: 로그인 필요. request_id 에 해당하는 HelpRequest의 스크린샷을
+    """로그인 필요. request_id 에 해당하는 HelpRequest의 스크린샷을
     가져와서 캔버스 화면에 표시"""
-    return render(request, "helper/drawings.html", {"request_id": request_id})
+    help_request = get_object_or_404(HelpRequest, pk=request_id)
+
+    try:
+        initial_shapes = json.loads(help_request.canvas_data or "[]")
+    except json.JSONDecodeError:
+        initial_shapes = []
+
+    return render(
+        request,
+        "helper/drawings.html",
+        {
+            "request_id": request_id,
+            "screenshot_url": help_request.screenshot.url if help_request.screenshot else "",
+            "initial_shapes": initial_shapes,
+        },
+    )
 
 
 @login_required
