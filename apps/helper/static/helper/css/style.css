@@ -97,3 +97,11 @@ margin: 0 auto 20px;
 font-size: 14px;
 color: #555;
 }
+
+/* 로그인 / 회원가입 폼 에러 메시지 공용 */
+
+.form-error {
+color: #d92d20;
+font-size: 13px;
+margin-top: 8px;
+}

@@ -18,6 +18,8 @@ class HelperProfile(models.Model):
     # TODO: 실제 SMS/PASS 본인인증 연동 후 True 로 전환
     is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    intro = models.CharField(max_length=200, blank=True, default="")
+    profile_image = models.ImageField(upload_to="profiles/%Y/%m/%d/", null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username}의 프로필"

@@ -10,16 +10,15 @@ gap: 20px;
 .home-top,
 .home-bottom {
 display: flex;
-flex-wrap: nowrap;
+flex-wrap: wrap;
 gap: 20px;
 }
 
 /* 홍보카드 */
 .welcome-card {
 position: relative;
-width: 695px;
-flex-shrink: 0;
-height: 276px;
+flex: 1 1 400px;
+min-height: 276px;
 border-radius: 20px;
 background: #F7F7F7;
 box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
@@ -46,13 +45,12 @@ background: transparent;
 
 /* 프로필 카드 */
 .profile-card {
-width: 574px;
-flex-shrink: 0;
+flex: 1 1 320px;
 display: flex;
 flex-direction: column;
 justify-content: center;
 gap: 20px;
-height: 276px;
+min-height: 276px;
 padding: 40px;
 border-radius: 20px;
 background: #F7F7F7;
@@ -108,9 +106,8 @@ margin-top: 8px;
 
 /* 효도클릭이란 카드 */
 .info-card {
-width: 695px;
-flex-shrink: 0;
-height: 482px;
+flex: 1 1 400px;
+min-height: 482px;
 border-radius: 20px;
 background: #F7F7F7;
 box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
@@ -141,9 +138,8 @@ line-height: 40px;
 /* 이달의 효자 랭킹 카드 */
 .ranking-card {
 display: flex;
-width: 574px;
-flex-shrink: 0;
-height: 482px;
+flex: 1 1 320px;
+min-height: 482px;
 padding: 43px 43px 39px 43px;
 flex-direction: column;
 justify-content: space-between;
@@ -161,8 +157,8 @@ width: 100%;
 }
 
 .home-rank-item {
-width: 498px;
-height: 66px;
+width: 100%;
+min-height: 66px;
 display: flex;
 align-items: center;
 gap: 16px;

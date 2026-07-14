@@ -11,43 +11,11 @@
         이달의 효자 랭킹
     </h2>
 
-    {# 상위 3명 나중에 연동하기 #}
-    <div class="ranking-top3">
-        <div class="rank-card rank-gold">
-            <span class="rank-num">1</span>
-            <p class="rank-name">김효자</p>
-            <p class="rank-count">30개</p>
-        </div>
-        <div class="rank-card rank-silver">
-            <span class="rank-num">2</span>
-            <p class="rank-name">이효자</p>
-            <p class="rank-count">20개</p>
-        </div>
-        <div class="rank-card rank-bronze">
-            <span class="rank-num">3</span>
-            <p class="rank-name">박효자</p>
-            <p class="rank-count">10개</p>
-        </div>
-    </div>
+    <div class="ranking-top3" id="rankingTop3"></div>
 
-    {# 4등부터도 나중에 연동하기 #}
-    <div class="ranking-list">
-        <div class="rank-row">
-            <span class="rank-num">4</span>
-            <span class="rank-name">최효자</span>
-            <span class="rank-count">9개</span>
-        </div>
-        <div class="rank-row">
-            <span class="rank-num">5</span>
-            <span class="rank-name">이효자</span>
-            <span class="rank-count">8개</span>
-        </div>
-        <div class="rank-row">
-            <span class="rank-num">6</span>
-            <span class="rank-name">강효자</span>
-            <span class="rank-count">7개</span>
-        </div>
-    </div>
+    <div class="ranking-list" id="rankingList"></div>
+
+    <p id="rankingEmpty" hidden>이번 달 랭킹이 아직 없어요.</p>
 
 </div>
 {% endblock %}
