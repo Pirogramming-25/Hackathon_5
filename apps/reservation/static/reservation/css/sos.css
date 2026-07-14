@@ -1,8 +1,40 @@
+.sos-annotation-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 150;
+}
+
 .sos-widget {
   position: fixed;
   right: 20px;
   bottom: 20px;
   z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.sos-status {
+  background: #10182b;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(16, 24, 43, 0.25);
+  white-space: nowrap;
+}
+
+.sos-status[hidden] {
+  display: none;
+}
+
+.sos-buttons {
+  display: flex;
+  gap: 8px;
 }
 
 .sos-trigger {
@@ -20,117 +52,18 @@
   box-shadow: 0 8px 20px rgba(91, 79, 232, 0.18);
 }
 
-.sos-panel {
-  position: fixed;
-  inset: 0;
-  background: rgba(16, 24, 43, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 300;
-}
-
-.sos-panel[hidden] {
-  display: none;
-}
-
-.sos-panel__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.sos-panel__title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #10182b;
-}
-
-.sos-panel__close {
-  border: none;
-  background: none;
-  color: #8a8f9c;
-  cursor: pointer;
-  display: flex;
-}
-
-.sos-panel__body {
-  background: #fff;
-  border-radius: 20px;
-  padding: 28px 24px;
-  width: min(420px, 92vw);
-  text-align: center;
-}
-
-.sos-panel__desc {
-  font-size: 13.5px;
-  color: #6b7280;
-  margin: 0 0 20px;
-}
-
-.sos-spinner {
-  width: 34px;
-  height: 34px;
-  margin: 0 auto;
-  border: 3px solid #e7eaf3;
-  border-top-color: #5b4fe8;
-  border-radius: 50%;
-  animation: sos-spin 0.8s linear infinite;
-}
-
-@keyframes sos-spin {
-  to { transform: rotate(360deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sos-spinner { animation: none; }
-}
-
-.sos-photo-box {
-  position: relative;
-  margin: 4px 0 16px;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #f2f0fb;
-  line-height: 0;
-}
-
-.sos-photo-img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.sos-photo-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.sos-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.sos-action {
-  flex: 1;
-  border: none;
-  border-radius: 12px;
-  padding: 14px 10px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.sos-action--secondary {
-  background: #f1f0f5;
-  color: #4b5063;
-}
-
-.sos-action--primary {
+.sos-complete {
   background: #5b4fe8;
   color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(91, 79, 232, 0.18);
+}
+
+.sos-complete[hidden] {
+  display: none;
 }
