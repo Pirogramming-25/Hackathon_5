@@ -7,7 +7,10 @@
 <div class="drawings-wrapper">
 
     <div class="canvas-area">
-        <!--이건 나중에 생각해봐용-->
+        {% if screenshot_url %}
+        <img src="{{ screenshot_url }}" alt="이용자 화면" class="screenshot-img" id="screenshotImg">
+        {% endif %}
+        <canvas id="drawCanvas" class="draw-canvas"></canvas>
     </div>
 
     <div class="toolbar">
@@ -41,6 +44,7 @@
     </div>
 
 </div>
+{{ initial_shapes|json_script:"initial-shapes-data" }}
 {% endblock %}
 
 {% block extra_js %}
