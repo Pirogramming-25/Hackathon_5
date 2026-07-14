@@ -6,7 +6,7 @@ if (backBtn) {
     });
 }
 
-
+// 비밀번호 숨기기
 const toggleBtn = document.querySelector('.btn-toggle-password');
 if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
@@ -18,4 +18,3 @@ if (toggleBtn) {
         }
     });
 }
-
