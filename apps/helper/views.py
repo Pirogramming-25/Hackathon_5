@@ -5,9 +5,10 @@ urls.py 가 아래 함수 이름들을 이미 라우팅해뒀으니 이름은 �
 채우면 됩니다. 로그인/회원가입 "실제 처리"는 accounts 앱의 API를 fetch()로
 호출하는 방식(담당자 4와 계약)으로 구현하는 걸 추천합니다.
 """
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Max
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from apps.accounts.models import Badge, HelperProfile
@@ -24,8 +25,9 @@ def signup_view(request):
 
 
 def logout_view(request):
-    """TODO: 로그아웃 처리 후 login으로 리다이렉트"""
-    pass
+    """로그아웃 처리 후 main으로 리다이렉트"""
+    logout(request)
+    return redirect("helper:main")
 
 
 @login_required
