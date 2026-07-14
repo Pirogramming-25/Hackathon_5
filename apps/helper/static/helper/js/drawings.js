@@ -235,11 +235,23 @@ toolItems.forEach((item) => {
     });
 });
 
-if (screenshotImg && !screenshotImg.complete) {
-    screenshotImg.addEventListener('load', resizeCanvas);
+if (screenshotImg) {
+    if (screenshotImg.complete && screenshotImg.naturalWidth > 0) {
+        resizeCanvas();
+    } else {
+        screenshotImg.addEventListener('load', resizeCanvas);
+    }
+} else {
+    resizeCanvas();
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+
+// 스크린샷 로딩/폰트/반응형 레이아웃 등 어떤 이유로든 .canvas-area 크기가
+// 바뀌면 캔버스 해상도도 즉시 다시 맞춰서, 좌표가 실제 이미지와 어긋나지 않게 한다.
+if (canvasArea && typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(() => resizeCanvas()).observe(canvasArea);
+} else {
+    window.addEventListener('resize', resizeCanvas);
+}
 
 sessionSocket.onopen = () => {
     console.log('도움 세션 웹소켓 연결 성공');
@@ -254,12 +266,12 @@ sessionSocket.onmessage = (event) => {
 
     if (action === 'cancelled') {
         alert('이용자가 도움을 종료했습니다.');
-        window.location.href = '/';
+        window.location.href = '/waiting/';
     }
 
     if (action === 'completed') {
         alert('도움이 완료되었습니다.');
-        window.location.href = '/';
+        window.location.href = '/waiting/';
     }
 
     if (action === 'draw') {
@@ -272,15 +284,9 @@ const completeBtn = document.querySelector('.btn-complete');
 
 if (completeBtn) {
     completeBtn.addEventListener('click', () => {
-        if (sessionSocket.readyState !== WebSocket.OPEN) {
-            alert('서버 연결 중입니다. 잠시 후 다시 눌러주세요.');
-            return;
-        }
-
-        sessionSocket.send(
-            JSON.stringify({
-                action: 'complete',
-            })
-        );
+        // 도우미의 완료는 도우미 화면만 닫고 홈으로 돌아간다.
+        // 이용자 화면의 도구는 이용자가 직접 완료를 눌러야 사라지므로
+        // 여기서는 세션 전체를 끝내는 'complete' 액션을 보내지 않는다.
+        window.location.href = '/waiting/';
     });
 }

@@ -1,1 +1,11 @@
 /* TODO(담당자 1): 예약 화면 스타일을 자유롭게 구성하세요. */
+
+/*
+  브라우저 기본 body margin이 남아있으면 html2canvas(document.body)로 캡처한
+  좌표계와 #sosAnnotationCanvas(자식으로서 body 기준 절대 위치)가 어긋난다.
+  margin을 0으로 없애고 body를 position:relative로 고정해서 두 좌표계를 맞춘다.
+*/
+body {
+  margin: 0;
+  position: relative;
+}
