@@ -86,7 +86,7 @@ position: absolute;
 left: 637px;
 top: 270px;
 border-radius: 30px;
-background: var(--help-btn, #8E47C0);
+background: var(--help-btn);
 color: #fff;
 font-size: 16px;
 font-weight: 700;
