@@ -15,9 +15,9 @@
 
         <div class="profile-card">
             <div class="profile-top">
-                <div class="profile-img"></div>
+                <div class="profile-img" {% if profile.profile_image %}style="background-image:url('{{ profile.profile_image.url }}');background-size:cover;background-position:center;"{% endif %}></div>
                 <div class="profile-text">
-                    <p class="profile-name">김효자님</p>
+                    <p class="profile-name">{{ user.first_name|default:user.username }}님</p>
                     <p class="badge-count">{{ badge_count }}개 배지 보유중</p>
                 </div>
             </div>
@@ -45,20 +45,15 @@
                 이달의 효자 랭킹
             </h3>
 
-            {# TODO: RankingAPIView 연동 후 for문으로 교체 #}
             <div class="home-rank-list">
-                <div class="home-rank-item rank-gold">
-                    <span class="rank-num">1</span>
-                    <span class="rank-name">김효자</span>
+                {% for entry in top_ranking %}
+                <div class="home-rank-item {% if forloop.counter == 1 %}rank-gold{% elif forloop.counter == 2 %}rank-silver{% else %}rank-bronze{% endif %}">
+                    <span class="rank-num">{{ forloop.counter }}</span>
+                    <span class="rank-name">{{ entry.helper__first_name|default:entry.helper__username }}</span>
                 </div>
-                <div class="home-rank-item rank-silver">
-                    <span class="rank-num">2</span>
-                    <span class="rank-name">이효자</span>
-                </div>
-                <div class="home-rank-item rank-bronze">
-                    <span class="rank-num">3</span>
-                    <span class="rank-name">박효자</span>
-                </div>
+                {% empty %}
+                <p>이번 달 랭킹이 아직 없어요.</p>
+                {% endfor %}
             </div>
 
             <button class="btn-view-ranking">전체 랭킹 보기</button>

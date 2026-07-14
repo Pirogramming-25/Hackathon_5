@@ -7,21 +7,21 @@
 <div class="myinfo-wrapper">
 
     <div class="profile-card">
-        <div class="profile-img"></div>
+        <div class="profile-img" {% if profile.profile_image %}style="background-image:url('{{ profile.profile_image.url }}');background-size:cover;background-position:center;"{% endif %}></div>
 
         <div class="profile-info">
-            <p class="profile-name">김효자님</p>
-            <p class="profile-sub">안녕하세요 김효자입니다.</p> 
+            <p class="profile-name">{{ user.first_name|default:user.username }}님</p>
+            <p class="profile-sub">{% if profile.intro %}{{ profile.intro }}{% else %}안녕하세요 {{ user.first_name|default:user.username }}입니다.{% endif %}</p>
         </div>
     </div>
 
     <div class="profile-edit-card">
-        <form id="myinfo-form" class="edit-form">
+        <form id="myinfo-form" class="edit-form" data-mypage-url="{% url 'helper:mypage' %}">
             <label for="name">이름</label>
-            <input type="text" name="name" id="name">
+            <input type="text" name="name" id="name" value="{{ user.first_name }}">
 
             <label for="intro">소개글</label>
-            <input type="text" name="intro" id="intro">
+            <input type="text" name="intro" id="intro" value="{{ profile.intro }}">
 
             <label for="profile_image">프로필 사진</label>
             <input type="file" name="profile_image" id="profile_image">
