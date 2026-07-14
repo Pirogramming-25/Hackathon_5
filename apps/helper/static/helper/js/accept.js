@@ -69,6 +69,16 @@ helperSocket.onmessage = (event) => {
         alert("다른 도우미가 먼저 수락했습니다.");
         sessionStorage.removeItem("currentHelpRequest");
         window.location.href = "/waiting/";
+        return;
+    }
+
+    if (
+        data.type === "request_cancelled" &&
+        data.request_id === currentRequestId
+    ) {
+        alert("이용자가 도움 요청을 취소했습니다.");
+        sessionStorage.removeItem("currentHelpRequest");
+        window.location.href = "/waiting/";
     }
 };
 
