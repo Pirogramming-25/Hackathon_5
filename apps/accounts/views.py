@@ -21,7 +21,7 @@ class SignupAPIView(APIView):
         user = serializer.save()
         login(request, user)
         
-        return Response({"username": user.username}, status=201)
+        return Response({"username": user.username, "name": user.first_name}, status=201)
 
 @method_decorator(csrf_exempt, name="dispatch")
 class LoginAPIView(APIView):
@@ -40,7 +40,7 @@ class LoginAPIView(APIView):
         if user is None:
             return Response({"detail": "아이디 또는 비밀번호가 올바르지 않습니다."}, status=400)
         login(request, user)
-        return Response({"username": user.username})
+        return Response({"username": user.username, "name": user.first_name})
 
 class LogoutAPIView(APIView):
     def post(self, request):
