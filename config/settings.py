@@ -159,6 +159,10 @@ STORAGES = {
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# SOS 스크린샷(html2canvas로 캡처한 전체 페이지 PNG, base64)이 Django 기본값인
+# 2.5MB를 쉽게 넘어서 sos_request 요청이 RequestDataTooBig으로 거부되는 걸 방지.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 15 * 1024 * 1024  # 15MB
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # 로그인 관련 (도우미 전용 로그인. 이용자는 로그인 없이 세션만 사용)

@@ -1,9 +1,11 @@
 /*
-  담당자 1과 협의 필요한 가정(assumption) 목록
+  apps/matching/consumers.py (SessionConsumer) 실제 스펙에 맞춘 계약.
   1) POST /sos/request/ 요청 바디: { screenshot: "data:image/png;base64,...", reservation_step: "step2_date" }
-  2) POST /sos/request/ 응답: { request_id: "abc123" }
-  3) 웹소켓 메시지 형식: { type: "status" | "helper_joined" | "resolved" | "cancelled", message: "..." }
-  아래 4개 값은 백엔드 완성되면 실제 스펙에 맞춰 수정해야 합니다.
+  2) POST /sos/request/ 응답: { request_id: 1 }
+  3) 웹소켓(/ws/session/<id>/) 메시지 형식:
+     - { type: "connected", request_id, message }               접속 확인
+     - { type: "matched", request_id, helper_id, helper_name }   도우미 매칭됨
+     - { type: "session_message", payload: { action: "completed" | "cancelled" | "draw", ... } }
 */
 const sosWidget = document.getElementById("sosWidget");
 const SOS_REQUEST_URL = sosWidget.dataset.sosUrl;
@@ -37,20 +39,14 @@ function withTimeout(promise, ms) {
 }
 
 async function captureScreen() {
-  const stream = await withTimeout(
-    navigator.mediaDevices.getDisplayMedia({ video: true }),
+  // html2canvas는 DOM을 그려서 캡처하므로 getDisplayMedia와 달리 브라우저의
+  // "화면 공유" 권한 팝업이 뜨지 않는다 (디지털 취약계층 사용자를 배려한 선택).
+  const canvas = await withTimeout(
+    html2canvas(document.body, {
+      ignoreElements: (el) => el.id === "sosWidget",
+    }),
     15000
   );
-  const track = stream.getVideoTracks()[0];
-  const imageCapture = new ImageCapture(track);
-  const bitmap = await imageCapture.grabFrame();
-
-  const canvas = document.createElement("canvas");
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
-  canvas.getContext("2d").drawImage(bitmap, 0, 0);
-
-  track.stop();
 
   return canvas.toDataURL("image/png");
 }
@@ -85,15 +81,32 @@ function connectSession(requestId) {
   sosSocket.addEventListener("message", (event) => {
     const data = JSON.parse(event.data);
 
-    if (data.type === "helper_joined") {
-      setStatus("도우미가 연결됐어요", data.message || "화면을 함께 보며 안내해드릴게요.");
-    } else if (data.type === "resolved") {
-      setStatus("도움이 완료됐어요", data.message || "이용해주셔서 감사합니다.");
-    } else if (data.type === "cancelled") {
-      setStatus("요청이 취소됐어요", data.message || "");
-    } else {
-      setStatus("상태 업데이트", data.message || "");
+    if (data.type === "connected") {
+      // open 이벤트에서 이미 "도우미를 찾고 있어요"로 안내했으므로 별도 표시 없음.
+      return;
     }
+
+    if (data.type === "matched") {
+      setStatus(
+        "도우미가 연결됐어요",
+        `${data.helper_name || "도우미"}님이 화면을 함께 보며 안내해드릴게요.`
+      );
+      return;
+    }
+
+    if (data.type === "session_message") {
+      const action = data.payload && data.payload.action;
+
+      if (action === "completed") {
+        setStatus("도움이 완료됐어요", "이용해주셔서 감사합니다.");
+      } else if (action === "cancelled") {
+        setStatus("요청이 취소됐어요", "");
+      }
+      // action === "draw"(캔버스 주석)는 이 상태 위젯에서는 표시하지 않는다.
+      return;
+    }
+
+    setStatus("상태 업데이트", data.message || "");
   });
 
   sosSocket.addEventListener("close", () => {
@@ -113,7 +126,7 @@ async function startSosFlow() {
   try {
     screenshotDataUrl = await captureScreen();
   } catch (err) {
-    setStatus("요청을 보내지 못했어요", "화면 캡처 권한이 필요해요.");
+    setStatus("요청을 보내지 못했어요", "화면 캡처에 실패했어요. 다시 시도해주세요.");
     return;
   }
 
@@ -124,9 +137,7 @@ async function startSosFlow() {
     setStatus("요청이 전달됐어요!", "곧 도우미가 연결될 거예요.");
     connectSession(request_id);
   } catch (err) {
-    // TODO(담당자 3): sos_request가 아직 501 스텁이라 항상 실패함.
-    // 백엔드 연동 전까지 프론트에서만 전송 완료로 보여줌.
-    setStatus("요청이 전달됐어요!", "도우미 매칭 기능은 준비 중이에요.");
+    setStatus("요청을 보내지 못했어요", "잠시 후 다시 시도해주세요.");
   }
 }
 
